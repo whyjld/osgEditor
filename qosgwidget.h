@@ -19,6 +19,8 @@
 
 Q_DECLARE_METATYPE(osgUtil::LineSegmentIntersector::Intersection)
 
+class PickHandler;
+
 class QOSGWidget : public QOpenGLWidget
 {
     Q_OBJECT
@@ -32,6 +34,7 @@ public:
     }
 signals:
     void nodeClicked(QVariant intersection);
+    void nodeDoubleClicked(QVariant intersection);
 
 public slots:
 
@@ -43,12 +46,13 @@ private:
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
     virtual void mouseReleaseEvent(QMouseEvent* event);
+    virtual void mouseDoubleClickEvent(QMouseEvent *event);
     virtual void wheelEvent(QWheelEvent* event);
     virtual bool event(QEvent* event);
 
     osg::GraphicsContext::Traits* CreateTraits();
 
-    void OnSelectNode(const osgUtil::LineSegmentIntersector::Intersection& i);
+    void OnOSGMouseEvent(osgGA::GUIEventAdapter::EventType type, osg::ref_ptr<osgViewer::View>& view, float x, float y);
 
     osgGA::EventQueue* getEventQueue() const
     {
@@ -59,6 +63,8 @@ private:
     osg::ref_ptr<osgViewer::Viewer> m_OSGViewer;
 
     qreal m_ScaleX, m_ScaleY;
+
+    PickHandler* m_PickHandler;
 };
 
 #endif // QOSGWIDGET_H

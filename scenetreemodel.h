@@ -34,16 +34,14 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    QModelIndex index(const osg::Geode* geode);
     void setSceneNode(const osg::ref_ptr<osg::Node>& node);
+
+    QModelIndex index(const osg::NodePath& path);
 
     void ShowAll();
     void HideAllExpect(size_t i);
 private:
-    void buildGeodeIndex(osg::Node* node, SceneTreeItem* item, std::hash_map<const osg::Geode*, SceneTreeItem*>& index);
-
     std::shared_ptr<SceneTreeItem> m_RootItem;
-    std::hash_map<const osg::Geode*, SceneTreeItem*> m_Index;
 };
 
 #endif // SCENETREEMODEL_H

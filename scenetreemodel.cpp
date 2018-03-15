@@ -145,30 +145,49 @@ int SceneTreeModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
-QModelIndex SceneTreeModel::index(const osg::Geode* geode)
-{
-    QModelIndex ret;
-    if(nullptr != geode)
-    {
-        auto i = m_Index.find(geode);
-        if(i != m_Index.end())
-        {
-            ret = createIndex(i->second->row(), 0, i->second);
-        }
-    }
-    return ret;
-}
-
 void SceneTreeModel::setSceneNode(const osg::ref_ptr<osg::Node>& node)
 {
-    osg::Group* group = node->asGroup();
-    if(nullptr != group)
-    {
-        std::hash_map<const osg::Geode*, SceneTreeItem*> newIndex;
-        std::shared_ptr<SceneTreeItem> newRoot(new SceneTreeItem(node, nullptr));
+    std::shared_ptr<SceneTreeItem> newRoot(new SceneTreeItem(node, nullptr));
 
-        m_RootItem = newRoot;
-        m_Index = newIndex;
+    m_RootItem = newRoot;
+}
+
+QModelIndex SceneTreeModel::index(const osg::NodePath& path)
+{
+    SceneTreeItem* item = nullptr;
+    if(path.size() > 0)
+    {
+        if(path[1] == m_RootItem->getNode())
+        {
+            item = m_RootItem.get();
+            for(size_t i = 2;i < path.size();++i)
+            {
+                const osg::Node* node = path[i];
+
+                SceneTreeItem* curr = nullptr;
+                for(size_t c = 0;c < item->childCount();++c)
+                {
+                    if(node == item->child(c)->getNode())
+                    {
+                        curr = item->child(c);
+                        break;
+                    }
+                }
+                item = curr;
+                if(nullptr == item)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    if(nullptr != item)
+    {
+        return createIndex(0, 0, item);
+    }
+    else
+    {
+        return QModelIndex();
     }
 }
 
@@ -185,22 +204,5 @@ void SceneTreeModel::HideAllExpect(size_t i)
     for(size_t c = 0;c < m_RootItem->childCount();++c)
     {
         m_RootItem->child(c)->getNode()->setNodeMask(c == i);
-    }
-}
-
-void SceneTreeModel::buildGeodeIndex(osg::Node* node, SceneTreeItem* item, std::hash_map<const osg::Geode*, SceneTreeItem*>& index)
-{
-    osg::Geode* geode = node->asGeode();
-    if(nullptr != geode)
-    {
-        index[geode] = item;
-    }
-    osg::Group* group = node->asGroup();
-    if(nullptr != group)
-    {
-        for(size_t i = 0;i < group->getNumChildren();++i)
-        {
-            buildGeodeIndex(group->getChild(i), item, index);
-        }
     }
 }

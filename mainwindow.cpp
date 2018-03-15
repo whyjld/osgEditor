@@ -162,3 +162,23 @@ void MainWindow::on_actionE_xit_triggered()
     //todo:Quit
     close();
 }
+
+void MainWindow::on_tvSceneTree_clicked(const QModelIndex &index)
+{
+    //todo:
+}
+
+void MainWindow::on_tvSceneTree_doubleClicked(const QModelIndex &index)
+{
+    //todo:转到节点
+}
+
+void MainWindow::on_owSceneViewer_nodeClicked(QVariant i)
+{
+    //todo:转到节点
+    auto intersection = i.value<osgUtil::LineSegmentIntersector::Intersection>();
+    if(intersection.nodePath.size() > 0)
+    {
+        ui->tvSceneTree->selectionModel()->setCurrentIndex(((SceneTreeModel*)ui->tvSceneTree->model())->index(intersection.nodePath), QItemSelectionModel::SelectCurrent);
+    }
+}

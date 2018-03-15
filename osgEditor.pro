@@ -28,13 +28,15 @@ SOURCES += \
         mainwindow.cpp \
     qosgwidget.cpp \
     scenetreeitem.cpp \
-    scenetreemodel.cpp
+    scenetreemodel.cpp \
+    pickhandler.cpp
 
 HEADERS += \
         mainwindow.h \
     qosgwidget.h \
     scenetreeitem.h \
-    scenetreemodel.h
+    scenetreemodel.h \
+    pickhandler.h
 
 FORMS += \
         mainwindow.ui

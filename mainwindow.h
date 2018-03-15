@@ -29,6 +29,12 @@ private slots:
 
     void on_actionE_xit_triggered();
 
+    void on_tvSceneTree_clicked(const QModelIndex &index);
+
+    void on_tvSceneTree_doubleClicked(const QModelIndex &index);
+
+    void on_owSceneViewer_nodeClicked(QVariant i);
+
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();
