@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "scenetreeitem.h"
 #include "scenetreemodel.h"
 
 #include <osgDB/ReadFile>
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
     , m_Settings("./config.ini", QSettings::IniFormat)
     , m_Manipulator(new osgGA::TrackballManipulator())
+    , m_SelectScribe(new osgFX::Scribe())
 {
     ui->setupUi(this);
 
@@ -23,6 +25,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_Manipulator->setAllowThrow(false);
     ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
+
+    m_SelectScribe->setEnabled(true);
+    m_SelectScribe->setWireframeColor(osg::Vec4(0.0, 0.0, 1.0, 1.0));
 
     initializeRecentItem();
     QStringList files = m_Settings.value("recentFileList").toStringList();
@@ -122,13 +127,77 @@ void MainWindow::loadSceneFile(const QString& file)
         ui->owSceneViewer->getViewer()->setSceneData(newNode);
         ((SceneTreeModel*)ui->tvSceneTree->model())->setSceneNode(newNode);
         ui->tvSceneTree->reset();
-
+        m_File = file;
+        setWindowTitle(tr("osgEditor ") + m_File);
         addRecent(file);
     }
     else
     {
         QMessageBox::information(NULL, tr("Error"), tr("Can't load scene file."));
     }
+}
+
+void MainWindow::onSelectNode(const osg::NodePath& path)
+{
+    if(!path.empty())
+    {
+        osg::ref_ptr<osg::Node> node(path[path.size() - 1]);
+        if(m_SelectScribe->getNumChildren() > 0)
+        {
+            osg::ref_ptr<osg::Node> old(m_SelectScribe->getChild(0));
+            if(node.get() != old.get())
+            {
+                osg::Node::ParentList pl = m_SelectScribe->getParents();
+                for(auto i = pl.begin();i != pl.end();++i)
+                {
+                    (*i)->replaceChild(m_SelectScribe.get(), old.get());
+                }
+                m_SelectScribe->removeChildren(0, m_SelectScribe->getNumChildren());
+            }
+            else
+            {
+                return;
+            }
+        }
+        if(path.size() > 2)
+        {
+            osg::ref_ptr<osg::Geode> geode(dynamic_cast<osg::Geode*>(node.get()));
+            if(!!geode)
+            {
+                osg::ref_ptr<osg::Group> parent(dynamic_cast<osg::Group*>(path[path.size() - 2]));
+                parent->replaceChild(geode, m_SelectScribe);
+                m_SelectScribe->addChild(geode);
+            }
+        }
+    }
+}
+
+osg::NodePath MainWindow::treePath(const QModelIndex &index)
+{
+    osg::NodePath ns;
+    for(SceneTreeItem* i = (SceneTreeItem*)index.internalPointer();
+        i != nullptr;
+        i = i->parentItem())
+    {
+        ns.push_back(i->getNode());
+    }
+
+    osg::NodePath np;
+    auto h = ns.rbegin();
+    if((*h)->getNumParents() > 0)
+    {
+        np.push_back((*h)->getParents()[0]);
+    }
+    for(auto i = ns.rbegin();i != ns.rend();++i)
+    {
+        if(nullptr == *i)
+        {
+            np.clear();
+            break;
+        }
+        np.push_back(*i);
+    }
+    return np;
 }
 
 void MainWindow::on_action_Open_triggered()
@@ -165,12 +234,37 @@ void MainWindow::on_actionE_xit_triggered()
 
 void MainWindow::on_tvSceneTree_clicked(const QModelIndex &index)
 {
-    //todo:
+    //todo:选中节点
+    osg::NodePath np = treePath(index);
+    if(!np.empty())
+    {
+        onSelectNode(np);
+    }
 }
 
 void MainWindow::on_tvSceneTree_doubleClicked(const QModelIndex &index)
 {
     //todo:转到节点
+    osg::NodePath np = treePath(index);
+    if(!np.empty())
+    {
+        onSelectNode(np);
+
+        float dis = m_Manipulator->getDistance();
+
+        osg::Vec3f ctr = m_Manipulator->getCenter();
+        osg::Vec3f dir = np[np.size() - 1]->getBound().center() * osg::computeLocalToWorld(np) - ctr;
+        dir.normalize();
+        osg::Vec3f eye = dir * dis + ctr;
+        dir *= -1.0f;
+
+        osg::Vec3f up(0.0f, 0.0f, 1.0f);
+        osg::Vec3f right = dir ^ up;
+
+        up = right ^ dir;
+
+        m_Manipulator->setTransformation(eye, ctr, up);
+    }
 }
 
 void MainWindow::on_owSceneViewer_nodeClicked(QVariant i)
@@ -180,5 +274,37 @@ void MainWindow::on_owSceneViewer_nodeClicked(QVariant i)
     if(intersection.nodePath.size() > 0)
     {
         ui->tvSceneTree->selectionModel()->setCurrentIndex(((SceneTreeModel*)ui->tvSceneTree->model())->index(intersection.nodePath), QItemSelectionModel::SelectCurrent);
+        onSelectNode(intersection.nodePath);
     }
+}
+
+void MainWindow::on_actionSave_As_triggered()
+{
+    std::shared_ptr<QFileDialog> saveDialog(new QFileDialog(this));
+    saveDialog->setWindowTitle(tr("Save As"));
+    saveDialog->setDirectory(".");
+    saveDialog->setDefaultSuffix(".osgb");
+    saveDialog->setFileMode(QFileDialog::AnyFile);
+
+    QStringList filters;
+    filters << tr("Scene Files(*.osg *.osgb)") << tr("OSG Files(*.osg)") << tr("OSG Binary Files(*.osgb)") << tr("All Files(*.*)");
+    saveDialog->setNameFilters(filters);
+    if(QDialog::Accepted == saveDialog->exec())
+    {
+        QString file = saveDialog->selectedFiles()[0];
+
+        if(!!osgDB::writeNodeFile(*ui->owSceneViewer->getViewer()->getSceneData(), file.toStdString()))
+        {
+            addRecent(file);
+        }
+        else
+        {
+            QMessageBox::information(NULL, tr("Error"), tr("Can't write scene file."));
+        }
+    }
+}
+
+void MainWindow::on_action_Save_triggered()
+{
+    osgDB::writeNodeFile(*ui->owSceneViewer->getViewer()->getSceneData(), m_File.toStdString());
 }

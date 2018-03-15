@@ -2,6 +2,7 @@
 #include "pickhandler.h"
 
 #include <cmath>
+#include <limits>
 #include <QMouseEvent>
 
 #include <osg/Geode>
@@ -20,6 +21,8 @@ QOSGWidget::QOSGWidget(QWidget *parent)
     , m_OSGViewer(new osgViewer::Viewer)
     , m_ScaleX(1.0f)
     , m_ScaleY(1.0f)
+    , m_MouseX(std::numeric_limits<float>::quiet_NaN())
+    , m_MouseY(std::numeric_limits<float>::quiet_NaN())
     , m_PickHandler(new PickHandler(std::bind(&QOSGWidget::OnOSGMouseEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4)))
 {
     qRegisterMetaType<QVariant>("QVariant");
@@ -159,22 +162,18 @@ void QOSGWidget::OnOSGMouseEvent(osgGA::GUIEventAdapter::EventType type, osg::re
     switch(type)
     {
     case osgGA::GUIEventAdapter::PUSH:
-    case osgGA::GUIEventAdapter::DOUBLECLICK:
-        if(true)
+        m_MouseX = x;
+        m_MouseY = y;
+        break;
+    case osgGA::GUIEventAdapter::RELEASE:
+        if(x == m_MouseX && y == m_MouseY)
         {
             osgUtil::LineSegmentIntersector::Intersections intersections;
             if(view->computeIntersections(x, y, intersections))
             {
                 intersection.setValue(*intersections.begin());
             }
-            if(osgGA::GUIEventAdapter::PUSH == type)
-            {
-                emit nodeClicked(intersection);
-            }
-            else
-            {
-                emit nodeDoubleClicked(intersection);
-            }
+            emit nodeClicked(intersection);
         }
         break;
     default:

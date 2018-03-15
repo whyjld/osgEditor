@@ -34,7 +34,6 @@ public:
     }
 signals:
     void nodeClicked(QVariant intersection);
-    void nodeDoubleClicked(QVariant intersection);
 
 public slots:
 
@@ -64,6 +63,7 @@ private:
 
     qreal m_ScaleX, m_ScaleY;
 
+    float m_MouseX, m_MouseY;
     PickHandler* m_PickHandler;
 };
 

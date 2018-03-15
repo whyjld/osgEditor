@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <osg/ref_ptr>
+#include <osgFX/Scribe>
 #include <osgGA/TrackballManipulator>
 
 #include <QMainWindow>
@@ -35,17 +36,27 @@ private slots:
 
     void on_owSceneViewer_nodeClicked(QVariant i);
 
+    void on_actionSave_As_triggered();
+
+    void on_action_Save_triggered();
+
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();
     void updateRecentItem(const QStringList& files);
     void loadSceneFile(const QString& file);
 
+    void onSelectNode(const osg::NodePath& path);
+    osg::NodePath treePath(const QModelIndex &index);
+
     Ui::MainWindow *ui;
 
     QSettings m_Settings;
 
+    QString m_File;
+
     osg::ref_ptr<osgGA::TrackballManipulator> m_Manipulator;
+    osg::ref_ptr<osgFX::Scribe> m_SelectScribe;
 };
 
 #endif // MAINWINDOW_H
