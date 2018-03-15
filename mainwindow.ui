@@ -33,9 +33,19 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menu_Recent_Files">
+     <property name="title">
+      <string>&amp;Recent Files</string>
+     </property>
+     <addaction name="actionNone"/>
+     <addaction name="separator"/>
+     <addaction name="action_Clear_files"/>
+    </widget>
     <addaction name="action_Open"/>
     <addaction name="action_Save"/>
     <addaction name="actionSave_As"/>
+    <addaction name="separator"/>
+    <addaction name="menu_Recent_Files"/>
     <addaction name="separator"/>
     <addaction name="actionE_xit"/>
    </widget>
@@ -100,6 +110,16 @@
   <action name="actionE_xit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionNone">
+   <property name="text">
+    <string>None</string>
+   </property>
+  </action>
+  <action name="action_Clear_files">
+   <property name="text">
+    <string>&amp;Clear files</string>
    </property>
   </action>
  </widget>
