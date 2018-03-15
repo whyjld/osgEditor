@@ -3,6 +3,7 @@
 
 #include "scenetreeitem.h"
 #include "scenetreemodel.h"
+#include "propertytreemodel.h"
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
@@ -22,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     ui->tvSceneTree->setModel(new SceneTreeModel());
+    ui->tvProperty->setModel(new PropertyTreeModel());
 
     m_Manipulator->setAllowThrow(false);
     ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
@@ -169,6 +171,10 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
                 m_SelectScribe->addChild(geode);
             }
         }
+        QString name = node->getName().length() > 0 ? node->getName().c_str() : tr("No Name");
+        ui->lblNode->setText(name + QString(" : ") + QString(node->className()));
+        ((PropertyTreeModel*)ui->tvProperty->model())->setObject(node.get());
+        ui->tvProperty->reset();
     }
 }
 
