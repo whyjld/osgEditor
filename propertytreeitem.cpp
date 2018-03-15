@@ -1,5 +1,6 @@
 #include "propertytreeitem.h"
 #include "propertytreeobjectitem.h"
+#include "propertytreenodeitem.h"
 #include <QStringList>
 #include <osg/Group>
 #include <osg/Geode>
@@ -18,6 +19,11 @@ PropertyTreeItem::PropertyTreeItem(osg::Object* object)
     if(object != nullptr)
     {
         m_ChildItems.append(new PropertyTreeObjectItem(this, object));
+    }
+    osg::Node* node = dynamic_cast<osg::Node*>(object);
+    if(node != nullptr)
+    {
+        m_ChildItems.append(new PropertyTreeNodeItem(this, node));
     }
 }
 

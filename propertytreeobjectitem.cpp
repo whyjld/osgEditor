@@ -1,7 +1,6 @@
 #include "propertytreeobjectitem.h"
 #include "propertytreepropertyitem.h"
 
-#include <functional>
 
 PropertyTreeObjectItem::PropertyTreeObjectItem(PropertyTreeItem *parentItem, osg::Object* obj)
     : PropertyTreeItem(parentItem)

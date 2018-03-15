@@ -62,4 +62,42 @@ private:
     Getter_t m_Getter;
 };
 
+class PropertyTreeDisplayItem : public PropertyTreeItem
+{
+public:
+    PropertyTreeDisplayItem(PropertyTreeItem *parentItem, const QString& name, const Getter_t& getter)
+        : PropertyTreeItem(parentItem)
+        , m_Name(name)
+        , m_Getter(getter)
+    {
+
+    }
+
+    virtual ~PropertyTreeDisplayItem()
+    {
+
+    }
+
+    virtual QVariant data(int column, int role) const
+    {
+        if (Qt::DisplayRole == role)
+        {
+            switch(column)
+            {
+            case ptcProperty:
+                return QVariant(m_Name);
+            case ptcValue:
+                return QVariant(m_Getter());
+            default:
+                break;
+            }
+        }
+        return QVariant();
+    }
+private:
+    QString m_Name;
+    Getter_t m_Getter;
+};
+
+
 #endif // PROPERTYTREEPROPERTYITEM_H

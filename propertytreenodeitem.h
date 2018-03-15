@@ -9,10 +9,11 @@
 class PropertyTreeNodeItem : public PropertyTreeItem
 {
 public:
-    PropertyTreeNodeItem(PropertyTreeItem *parentItem, osg::ref_ptr<osg::Node>& node);
+    PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* node);
     virtual ~PropertyTreeNodeItem();
+
+    virtual QVariant data(int column, int role) const;
 private:
-    osg::ref_ptr<osg::Node> m_Node;
 };
 
 #endif // PROPERTYTREENODEITEM_H
