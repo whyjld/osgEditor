@@ -173,6 +173,7 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
         }
         QString name = node->getName().length() > 0 ? node->getName().c_str() : tr("No Name");
         ui->lblNode->setText(name + QString(" : ") + QString(node->className()));
+        ui->tvProperty->reset();
         ((PropertyTreeModel*)ui->tvProperty->model())->setObject(node.get());
         ui->tvProperty->reset();
     }
