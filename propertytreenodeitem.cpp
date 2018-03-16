@@ -1,5 +1,6 @@
 #include "propertytreenodeitem.h"
 #include "propertytreepropertyitem.h"
+#include "propertytreeboundingsphereitem.h"
 
 PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* node)
     : PropertyTreeItem(parent)
@@ -20,28 +21,28 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
     {
         return QVariant(node->getNumChildrenWithCullingDisabled());
     };
-    m_ChildItems.append(new PropertyTreeDisplayItem(this, "getNumChildrenWithCullingDisabled", getNumChildrenWithCullingDisabledGetter));
+    m_ChildItems.append(new PropertyTreePropertyItem(this, "getNumChildrenWithCullingDisabled", getNumChildrenWithCullingDisabledGetter));
 
     //isCullingActive
     auto isCullingActiveGetter = [node]()->QVariant
     {
         return QVariant(node->isCullingActive());
     };
-    m_ChildItems.append(new PropertyTreeDisplayItem(this, "isCullingActive", isCullingActiveGetter));
+    m_ChildItems.append(new PropertyTreePropertyItem(this, "isCullingActive", isCullingActiveGetter));
 
     //getNumChildrenWithOccluderNodes
     auto getNumChildrenWithOccluderNodesGetter = [node]()->QVariant
     {
         return QVariant(node->getNumChildrenWithOccluderNodes());
     };
-    m_ChildItems.append(new PropertyTreeDisplayItem(this, "getNumChildrenWithOccluderNodes", getNumChildrenWithOccluderNodesGetter));
+    m_ChildItems.append(new PropertyTreePropertyItem(this, "getNumChildrenWithOccluderNodes", getNumChildrenWithOccluderNodesGetter));
 
     //containsOccluderNodes
     auto containsOccluderNodesGetter = [node]()->QVariant
     {
         return QVariant(node->containsOccluderNodes());
     };
-    m_ChildItems.append(new PropertyTreeDisplayItem(this, "containsOccluderNodes", containsOccluderNodesGetter));
+    m_ChildItems.append(new PropertyTreePropertyItem(this, "containsOccluderNodes", containsOccluderNodesGetter));
 
     //NodeMask
     auto NodeMaskSetter = [node](const QVariant& v)
@@ -53,6 +54,13 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
         return QVariant(node->getNodeMask());
     };
     m_ChildItems.append(new PropertyTreePropertyItem(this, "NodeMask", NodeMaskSetter, NodeMaskGetter));
+
+    //getBound
+    auto getBoundGetter = [node]()->osg::BoundingSphere
+    {
+        return node->getBound();
+    };
+    m_ChildItems.append(new PropertyTreeBoundingSphereItem(this, "getBound", getBoundGetter));
 }
 
 PropertyTreeNodeItem::~PropertyTreeNodeItem()

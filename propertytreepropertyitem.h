@@ -16,6 +16,16 @@ public:
         , m_Name(name)
         , m_Setter(setter)
         , m_Getter(getter)
+        , m_Editable(true)
+    {
+
+    }
+
+    PropertyTreePropertyItem(PropertyTreeItem *parentItem, const QString& name, const Getter_t& getter)
+        : PropertyTreeItem(parentItem)
+        , m_Name(name)
+        , m_Getter(getter)
+        , m_Editable(false)
     {
 
     }
@@ -27,7 +37,7 @@ public:
 
     virtual Qt::ItemFlags flags(int column) const
     {
-        return ((ptcValue == column) ? Qt::ItemIsEditable : 0) | PropertyTreeItem::flags(column);
+        return ((m_Editable && ptcValue == column) ? Qt::ItemIsEditable : 0) | PropertyTreeItem::flags(column);
     }
 
     virtual QVariant data(int column, int role) const
@@ -60,44 +70,7 @@ private:
     QString m_Name;
     Setter_t m_Setter;
     Getter_t m_Getter;
+    bool m_Editable;
 };
-
-class PropertyTreeDisplayItem : public PropertyTreeItem
-{
-public:
-    PropertyTreeDisplayItem(PropertyTreeItem *parentItem, const QString& name, const Getter_t& getter)
-        : PropertyTreeItem(parentItem)
-        , m_Name(name)
-        , m_Getter(getter)
-    {
-
-    }
-
-    virtual ~PropertyTreeDisplayItem()
-    {
-
-    }
-
-    virtual QVariant data(int column, int role) const
-    {
-        if (Qt::DisplayRole == role)
-        {
-            switch(column)
-            {
-            case ptcProperty:
-                return QVariant(m_Name);
-            case ptcValue:
-                return QVariant(m_Getter());
-            default:
-                break;
-            }
-        }
-        return QVariant();
-    }
-private:
-    QString m_Name;
-    Getter_t m_Getter;
-};
-
 
 #endif // PROPERTYTREEPROPERTYITEM_H
