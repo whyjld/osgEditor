@@ -1,6 +1,7 @@
 #include "propertytreenodeitem.h"
 #include "propertytreepropertyitem.h"
 #include "propertytreeboundingsphereitem.h"
+#include "propertytreestatesetitem.h"
 
 PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* node)
     : PropertyTreeItem(parent)
@@ -61,6 +62,17 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
         return node->getBound();
     };
     m_ChildItems.append(new PropertyTreeBoundingSphereItem(this, "getBound", getBoundGetter));
+
+    //StateSet
+    auto getStateSet = [node]()->osg::StateSet*
+    {
+        return node->getStateSet();
+    };
+    auto createStateSet = [node]()->osg::StateSet*
+    {
+        return node->getOrCreateStateSet();
+    };
+    m_ChildItems.append(new PropertyTreeStateSetItem(this, "StateSet", createStateSet, getStateSet));
 }
 
 PropertyTreeNodeItem::~PropertyTreeNodeItem()

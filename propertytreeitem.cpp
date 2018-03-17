@@ -63,6 +63,7 @@ PropertyTreeItem *PropertyTreeItem::parentItem()
 
 Qt::ItemFlags PropertyTreeItem::flags(int column) const
 {
+    (column);
     return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
@@ -108,5 +109,40 @@ QVariant PropertyTreeItem::data(int column, int role) const
 
 bool PropertyTreeItem::setData(int column, const QVariant &value, int role)
 {
+    (column);
+    (value);
+    (role);
+    return false;
+}
+
+bool PropertyTreeItem::createEditor(QWidget*& editor, QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    (editor);
+    (parent);
+    (option);
+    (index);
+    return false;
+}
+
+bool PropertyTreeItem::setEditorData(QWidget* editor,const QModelIndex& index) const
+{
+    (editor);
+    (index);
+    return false;
+}
+
+bool PropertyTreeItem::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+{
+    (editor);
+    (model);
+    (index);
+    return false;
+}
+
+bool PropertyTreeItem::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    (editor);
+    (option);
+    (index);
     return false;
 }

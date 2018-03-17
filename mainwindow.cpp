@@ -4,6 +4,7 @@
 #include "scenetreeitem.h"
 #include "scenetreemodel.h"
 #include "propertytreemodel.h"
+#include "propertytreedelegate.h"
 
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tvSceneTree->setModel(new SceneTreeModel());
     ui->tvProperty->setModel(new PropertyTreeModel());
+    ui->tvProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvProperty));
 
     m_Manipulator->setAllowThrow(false);
     ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
@@ -176,6 +178,7 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
         ui->tvProperty->reset();
         ((PropertyTreeModel*)ui->tvProperty->model())->setObject(node.get());
         ui->tvProperty->reset();
+        ui->tvProperty->resizeColumnToContents(0);
     }
 }
 

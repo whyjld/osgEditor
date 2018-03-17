@@ -34,7 +34,9 @@ SOURCES += \
     propertytreemodel.cpp \
     propertytreenodeitem.cpp \
     propertytreeobjectitem.cpp \
-    propertytreeboundingsphereitem.cpp
+    propertytreeboundingsphereitem.cpp \
+    propertytreestatesetitem.cpp \
+    propertytreedelegate.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +49,9 @@ HEADERS += \
     propertytreenodeitem.h \
     propertytreeobjectitem.h \
     propertytreepropertyitem.h \
-    propertytreeboundingsphereitem.h
+    propertytreeboundingsphereitem.h \
+    propertytreestatesetitem.h \
+    propertytreedelegate.h
 
 FORMS += \
         mainwindow.ui
