@@ -41,7 +41,9 @@ SOURCES += \
     propertytreemodelistitem.cpp \
     propertytreemodeitem.cpp \
     propertytreeattributelistitem.cpp \
-    propertytreeattributeunknownitem.cpp
+    propertytreeattributeunknownitem.cpp \
+    propertytreeattributeprogramitem.cpp \
+    propertytreeattributeshaderitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -61,7 +63,9 @@ HEADERS += \
     propertytreemodelistitem.h \
     propertytreemodeitem.h \
     propertytreeattributelistitem.h \
-    propertytreeattributeunknownitem.h
+    propertytreeattributeunknownitem.h \
+    propertytreeattributeprogramitem.h \
+    propertytreeattributeshaderitem.h
 
 FORMS += \
         mainwindow.ui
