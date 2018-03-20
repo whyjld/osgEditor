@@ -17,10 +17,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    const int c_MaxRecentFile = 10;
+
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    const int c_MaxRecentFile = 10;
+    void editShader(osg::Shader* shader);
 private slots:
     void openRecentFile();
 
@@ -39,6 +41,18 @@ private slots:
     void on_actionSave_As_triggered();
 
     void on_action_Save_triggered();
+
+    void on_dwSceneTree_visibilityChanged(bool visible);
+
+    void on_dwProperty_visibilityChanged(bool visible);
+
+    void on_dwSource_visibilityChanged(bool visible);
+
+    void on_actionScene_Tree_toggled(bool arg1);
+
+    void on_action_Property_toggled(bool arg1);
+
+    void on_actionShader_Source_toggled(bool arg1);
 
 private:
     void addRecent(const QString& file);

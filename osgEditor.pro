@@ -16,6 +16,7 @@ TEMPLATE = app
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QSCINTILLA_DLL
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -38,12 +39,15 @@ SOURCES += \
     propertytreestatesetitem.cpp \
     propertytreedelegate.cpp \
     propertytreemodelistitem.cpp \
-    propertytreemodelistitem.cpp \
     propertytreemodeitem.cpp \
     propertytreeattributelistitem.cpp \
     propertytreeattributeunknownitem.cpp \
     propertytreeattributeprogramitem.cpp \
-    propertytreeattributeshaderitem.cpp
+    propertytreeattributeshaderitem.cpp \
+    propertytreeattributeshadersourceitem.cpp \
+    glsl/glsllexer.cpp \
+    glsl/QsciLexerGlsl.cpp \
+    qglsleditor.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -60,20 +64,28 @@ HEADERS += \
     propertytreestatesetitem.h \
     propertytreedelegate.h \
     propertytreemodelistitem.h \
-    propertytreemodelistitem.h \
     propertytreemodeitem.h \
     propertytreeattributelistitem.h \
     propertytreeattributeunknownitem.h \
     propertytreeattributeprogramitem.h \
-    propertytreeattributeshaderitem.h
+    propertytreeattributeshaderitem.h \
+    propertytreeattributeshadersourceitem.h \
+    glsl/FlexLexer.h \
+    glsl/glsllexer.h \
+    glsl/GlslLexer.lex \
+    glsl/QsciLexerGlsl.h \
+    qglsleditor.h
 
 FORMS += \
         mainwindow.ui
 
 INCLUDEPATH += \
-    ../OpenSceneGraph-3.4.1/include
+    ../QScintilla/include \
+    ../OpenSceneGraph-3.4.1/include \
+    ./glsl
 
 LIBS += \
+../QScintilla/lib/qscintilla2_qt5d.lib \
 ../OpenSceneGraph-3.4.1/lib/osgViewerd.lib \
 ../OpenSceneGraph-3.4.1/lib/osgGAd.lib \
 ../OpenSceneGraph-3.4.1/lib/osgDBd.lib \
@@ -83,3 +95,6 @@ LIBS += \
 ../OpenSceneGraph-3.4.1/lib/osgTextd.lib \
 ../OpenSceneGraph-3.4.1/lib/osgManipulatord.lib \
 ../OpenSceneGraph-3.4.1/lib/OpenThreadsd.lib
+
+DISTFILES += \
+    glsl/README.txt

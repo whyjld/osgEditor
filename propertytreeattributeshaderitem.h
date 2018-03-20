@@ -15,10 +15,11 @@ public:
     virtual Qt::ItemFlags flags(int column) const;
     virtual QVariant data(int column, int role) const;
     virtual bool setData(int column, const QVariant &value, int role);
+
+    osg::ref_ptr<osg::Shader> Shader;
 private slots:
 
 private:
-    osg::ref_ptr<osg::Shader> m_Shader;
 };
 
 #endif // PROPERTYTREEATTRIBUTESHADERITEM_H

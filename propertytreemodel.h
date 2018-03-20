@@ -20,7 +20,7 @@ class PropertyTreeModel : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    explicit PropertyTreeModel(QObject *parent = 0);
+    explicit PropertyTreeModel(QObject *window);
     ~PropertyTreeModel();
 
     QVariant data(const QModelIndex &index, int role) const override;
@@ -35,6 +35,8 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
     void setObject(const osg::ref_ptr<osg::Object>& obj);
+
+    QObject* Window;
 private:
     std::shared_ptr<PropertyTreeItem> m_RootItem;
 };

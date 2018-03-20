@@ -1,35 +1,26 @@
 ﻿#include "propertytreeattributeshaderitem.h"
+#include "propertytreeattributeshadersourceitem.h"
 #include "propertytreeattributelistitem.h"
 #include "propertytreepropertyitem.h"
 
 PropertyTreeAttributeShaderItem::PropertyTreeAttributeShaderItem(PropertyTreeItem *parent, osg::Shader* shader)
     : PropertyTreeItem(parent)
-    , m_Shader(shader)
+    , Shader(shader)
 {
     //Filename
     {
         auto getter = [this]()->QVariant
         {
-            return QVariant(m_Shader->getFileName().c_str());
+            return QVariant(Shader->getFileName().c_str());
         };
         auto setter = [this](const QVariant& value)
         {
-            m_Shader->setFileName(value.toString().toStdString());
+            Shader->setFileName(value.toString().toStdString());
         };
         m_ChildItems.push_back(new PropertyTreePropertyItem(this, "FileName", setter, getter));
     }
     //ShaderSource
-    {
-        auto getter = [this]()->QVariant
-        {
-            return QVariant(m_Shader->getShaderSource().c_str());
-        };
-        auto setter = [this](const QVariant& value)
-        {
-            m_Shader->setShaderSource(value.toString().toStdString());
-        };
-        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "ShaderSource", setter, getter));
-    }
+    m_ChildItems.push_back(new PropertyTreeAttributeShaderSourceItem(this));
 }
 
 PropertyTreeAttributeShaderItem::~PropertyTreeAttributeShaderItem()
@@ -50,7 +41,7 @@ QVariant PropertyTreeAttributeShaderItem::data(int column, int role) const
         case ptcProperty:
             return QVariant("Shader");
         case ptcValue:
-            return QVariant(m_Shader->getTypename());
+            return QVariant(Shader->getTypename());
         }
     }
     return PropertyTreeItem::data(column, role);

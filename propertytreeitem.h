@@ -14,12 +14,14 @@ enum PropertyTreeColumn
     stcCount,
 };
 
+class PropertyTreeModel;
+
 class PropertyTreeItem : public QObject
 {
     Q_OBJECT
 public:
-    PropertyTreeItem(PropertyTreeItem *parent = nullptr);
-    PropertyTreeItem(osg::Object* object);
+    PropertyTreeItem(PropertyTreeItem *parent);
+    PropertyTreeItem(PropertyTreeModel* model, osg::Object* object);
     virtual ~PropertyTreeItem();
 
     PropertyTreeItem *child(int row);
@@ -40,6 +42,7 @@ public:
     virtual bool setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
     virtual bool updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 protected:
+    PropertyTreeModel* m_Model;
     PropertyTreeItem *m_ParentItem;
     QList<PropertyTreeItem*> m_ChildItems;
 };

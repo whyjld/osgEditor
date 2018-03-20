@@ -9,12 +9,14 @@
 #include <osg/PrimitiveSet>
 
 PropertyTreeItem::PropertyTreeItem(PropertyTreeItem *parent)
-    : m_ParentItem(parent)
+    : m_Model((nullptr != parent) ? parent->m_Model : nullptr)
+    , m_ParentItem(parent)
 {
 }
 
-PropertyTreeItem::PropertyTreeItem(osg::Object* object)
-    : m_ParentItem(nullptr)
+PropertyTreeItem::PropertyTreeItem(PropertyTreeModel* model, osg::Object* object)
+    : m_Model(model)
+    , m_ParentItem(nullptr)
 {
     if(object != nullptr)
     {

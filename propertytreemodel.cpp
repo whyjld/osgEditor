@@ -8,9 +8,10 @@
 #include <osg/Geode>
 #include <osg/Group>
 
-PropertyTreeModel::PropertyTreeModel(QObject *parent)
-    : QAbstractItemModel(parent)
-    , m_RootItem(new PropertyTreeItem())
+PropertyTreeModel::PropertyTreeModel(QObject *window)
+    : QAbstractItemModel(nullptr)
+    , Window(window)
+    , m_RootItem(new PropertyTreeItem(nullptr))
 {
 }
 
@@ -137,7 +138,7 @@ int PropertyTreeModel::rowCount(const QModelIndex &parent) const
 
 void PropertyTreeModel::setObject(const osg::ref_ptr<osg::Object>& obj)
 {
-    std::shared_ptr<PropertyTreeItem> newRoot(new PropertyTreeItem(obj));
+    std::shared_ptr<PropertyTreeItem> newRoot(new PropertyTreeItem(this, obj));
 
     m_RootItem = newRoot;
 }

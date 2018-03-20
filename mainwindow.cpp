@@ -24,11 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     ui->tvSceneTree->setModel(new SceneTreeModel());
-    ui->tvProperty->setModel(new PropertyTreeModel());
+    ui->tvProperty->setModel(new PropertyTreeModel(this));
     ui->tvProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvProperty));
 
     m_Manipulator->setAllowThrow(false);
     ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
+
+    ui->wSearch->setVisible(false);
+    ui->wReplace->setVisible(false);
+
+    ui->qsShaderSource->setSearchWidget(ui->wSearch, ui->leSearch);
 
     m_SelectScribe->setEnabled(true);
     m_SelectScribe->setWireframeColor(osg::Vec4(0.0, 0.0, 1.0, 1.0));
@@ -139,6 +144,11 @@ void MainWindow::loadSceneFile(const QString& file)
     {
         QMessageBox::information(NULL, tr("Error"), tr("Can't load scene file."));
     }
+}
+
+void MainWindow::editShader(osg::Shader* shader)
+{
+    ui->qsShaderSource->setShader(shader);
 }
 
 void MainWindow::onSelectNode(const osg::NodePath& path)
@@ -317,4 +327,52 @@ void MainWindow::on_actionSave_As_triggered()
 void MainWindow::on_action_Save_triggered()
 {
     osgDB::writeNodeFile(*ui->owSceneViewer->getViewer()->getSceneData(), m_File.toStdString());
+}
+
+void MainWindow::on_dwSceneTree_visibilityChanged(bool visible)
+{
+    if(ui->actionScene_Tree->isChecked() != visible)
+    {
+        ui->actionScene_Tree->setChecked(visible);
+    }
+}
+
+void MainWindow::on_dwProperty_visibilityChanged(bool visible)
+{
+    if(ui->action_Property->isChecked() != visible)
+    {
+        ui->action_Property->setChecked(visible);
+    }
+}
+
+void MainWindow::on_dwSource_visibilityChanged(bool visible)
+{
+    if(ui->actionShader_Source->isChecked() != visible)
+    {
+        ui->actionShader_Source->setChecked(visible);
+    }
+}
+
+void MainWindow::on_actionScene_Tree_toggled(bool arg1)
+{
+    if(ui->dwSceneTree->isVisible() != arg1)
+    {
+        ui->dwSceneTree->setVisible(arg1);
+    }
+}
+
+void MainWindow::on_action_Property_toggled(bool arg1)
+{
+    if(ui->dwProperty->isVisible() != arg1)
+    {
+        ui->dwProperty->setVisible(arg1);
+    }
+}
+
+void MainWindow::on_actionShader_Source_toggled(bool arg1)
+{
+    if(ui->dwSource->isVisible() != arg1)
+    {
+        ui->dwSource->setVisible(arg1);
+    }
 }
