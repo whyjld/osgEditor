@@ -2,9 +2,9 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "glsllexer.h"
+#line 6 "glsllexer.h"
 
-#line 7 "glsllexer.h"
+#line 8 "glsllexer.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -12,8 +12,8 @@
 
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
-#define YY_FLEX_MINOR_VERSION 6
-#define YY_FLEX_SUBMINOR_VERSION 4
+#define YY_FLEX_MINOR_VERSION 5
+#define YY_FLEX_SUBMINOR_VERSION 35
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -92,29 +92,37 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
-#ifndef SIZE_MAX
-#define SIZE_MAX               (~(size_t)0)
-#endif
-
 #endif /* ! C99 */
 
 #endif /* ! FLEXINT_H */
 
 /* begin standard C++ headers. */
-#include <iostream>
+#include <iostream> 
 #include <errno.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
 /* end standard C++ headers. */
 
-/* TODO: this is always defined, so inline it */
-#define yyconst const
+#ifdef __cplusplus
 
-#if defined(__GNUC__) && __GNUC__ >= 3
-#define yynoreturn __attribute__((__noreturn__))
+/* The "const" storage-class-modifier is valid. */
+#define YY_USE_CONST
+
+#else	/* ! __cplusplus */
+
+/* C99 requires __STDC__ to be defined as 1. */
+#if defined (__STDC__)
+
+#define YY_USE_CONST
+
+#endif	/* defined (__STDC__) */
+#endif	/* ! __cplusplus */
+
+#ifdef YY_USE_CONST
+#define yyconst const
 #else
-#define yynoreturn
+#define yyconst
 #endif
 
 /* Size of default input buffer. */
@@ -135,19 +143,19 @@ typedef unsigned int flex_uint32_t;
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 #endif
 
+extern int yyleng;
+
 #ifndef YY_TYPEDEF_YY_SIZE_T
 #define YY_TYPEDEF_YY_SIZE_T
 typedef size_t yy_size_t;
 #endif
-
-extern int yyleng;
 
 #ifndef YY_STRUCT_YY_BUFFER_STATE
 #define YY_STRUCT_YY_BUFFER_STATE
 struct yy_buffer_state
 	{
 
-	std::streambuf* yy_input_file;
+	std::istream* yy_input_file;
 
 	char *yy_ch_buf;		/* input buffer */
 	char *yy_buf_pos;		/* current position in input buffer */
@@ -155,7 +163,7 @@ struct yy_buffer_state
 	/* Size of input buffer in bytes, not including room for EOB
 	 * characters.
 	 */
-	int yy_buf_size;
+	yy_size_t yy_buf_size;
 
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
@@ -183,7 +191,7 @@ struct yy_buffer_state
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-
+    
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
@@ -194,9 +202,9 @@ struct yy_buffer_state
 	};
 #endif /* !YY_STRUCT_YY_BUFFER_STATE */
 
-void *yyalloc ( yy_size_t  );
-void *yyrealloc ( void *, yy_size_t  );
-void yyfree ( void *  );
+void *yyalloc (yy_size_t  );
+void *yyrealloc (void *,yy_size_t  );
+void yyfree (void *  );
 
 /* Begin user sect3 */
 
@@ -215,11 +223,11 @@ void yyfree ( void *  );
 #endif
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy ( char *, const char *, int );
+static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen ( const char * );
+static int yy_flex_strlen (yyconst char * );
 #endif
 
 #ifndef YY_NO_INPUT
@@ -263,154 +271,9 @@ static int yy_flex_strlen ( const char * );
 #undef YY_DECL
 #endif
 
-#ifndef yy_create_buffer_ALREADY_DEFINED
-#undef yy_create_buffer
-#endif
-#ifndef yy_delete_buffer_ALREADY_DEFINED
-#undef yy_delete_buffer
-#endif
-#ifndef yy_scan_buffer_ALREADY_DEFINED
-#undef yy_scan_buffer
-#endif
-#ifndef yy_scan_string_ALREADY_DEFINED
-#undef yy_scan_string
-#endif
-#ifndef yy_scan_bytes_ALREADY_DEFINED
-#undef yy_scan_bytes
-#endif
-#ifndef yy_init_buffer_ALREADY_DEFINED
-#undef yy_init_buffer
-#endif
-#ifndef yy_flush_buffer_ALREADY_DEFINED
-#undef yy_flush_buffer
-#endif
-#ifndef yy_load_buffer_state_ALREADY_DEFINED
-#undef yy_load_buffer_state
-#endif
-#ifndef yy_switch_to_buffer_ALREADY_DEFINED
-#undef yy_switch_to_buffer
-#endif
-#ifndef yypush_buffer_state_ALREADY_DEFINED
-#undef yypush_buffer_state
-#endif
-#ifndef yypop_buffer_state_ALREADY_DEFINED
-#undef yypop_buffer_state
-#endif
-#ifndef yyensure_buffer_stack_ALREADY_DEFINED
-#undef yyensure_buffer_stack
-#endif
-#ifndef yylex_ALREADY_DEFINED
-#undef yylex
-#endif
-#ifndef yyrestart_ALREADY_DEFINED
-#undef yyrestart
-#endif
-#ifndef yylex_init_ALREADY_DEFINED
-#undef yylex_init
-#endif
-#ifndef yylex_init_extra_ALREADY_DEFINED
-#undef yylex_init_extra
-#endif
-#ifndef yylex_destroy_ALREADY_DEFINED
-#undef yylex_destroy
-#endif
-#ifndef yyget_debug_ALREADY_DEFINED
-#undef yyget_debug
-#endif
-#ifndef yyset_debug_ALREADY_DEFINED
-#undef yyset_debug
-#endif
-#ifndef yyget_extra_ALREADY_DEFINED
-#undef yyget_extra
-#endif
-#ifndef yyset_extra_ALREADY_DEFINED
-#undef yyset_extra
-#endif
-#ifndef yyget_in_ALREADY_DEFINED
-#undef yyget_in
-#endif
-#ifndef yyset_in_ALREADY_DEFINED
-#undef yyset_in
-#endif
-#ifndef yyget_out_ALREADY_DEFINED
-#undef yyget_out
-#endif
-#ifndef yyset_out_ALREADY_DEFINED
-#undef yyset_out
-#endif
-#ifndef yyget_leng_ALREADY_DEFINED
-#undef yyget_leng
-#endif
-#ifndef yyget_text_ALREADY_DEFINED
-#undef yyget_text
-#endif
-#ifndef yyget_lineno_ALREADY_DEFINED
-#undef yyget_lineno
-#endif
-#ifndef yyset_lineno_ALREADY_DEFINED
-#undef yyset_lineno
-#endif
-#ifndef yyget_column_ALREADY_DEFINED
-#undef yyget_column
-#endif
-#ifndef yyset_column_ALREADY_DEFINED
-#undef yyset_column
-#endif
-#ifndef yywrap_ALREADY_DEFINED
-#undef yywrap
-#endif
-#ifndef yyget_lval_ALREADY_DEFINED
-#undef yyget_lval
-#endif
-#ifndef yyset_lval_ALREADY_DEFINED
-#undef yyset_lval
-#endif
-#ifndef yyget_lloc_ALREADY_DEFINED
-#undef yyget_lloc
-#endif
-#ifndef yyset_lloc_ALREADY_DEFINED
-#undef yyset_lloc
-#endif
-#ifndef yyalloc_ALREADY_DEFINED
-#undef yyalloc
-#endif
-#ifndef yyrealloc_ALREADY_DEFINED
-#undef yyrealloc
-#endif
-#ifndef yyfree_ALREADY_DEFINED
-#undef yyfree
-#endif
-#ifndef yytext_ALREADY_DEFINED
-#undef yytext
-#endif
-#ifndef yyleng_ALREADY_DEFINED
-#undef yyleng
-#endif
-#ifndef yyin_ALREADY_DEFINED
-#undef yyin
-#endif
-#ifndef yyout_ALREADY_DEFINED
-#undef yyout
-#endif
-#ifndef yy_flex_debug_ALREADY_DEFINED
-#undef yy_flex_debug
-#endif
-#ifndef yylineno_ALREADY_DEFINED
-#undef yylineno
-#endif
-#ifndef yytables_fload_ALREADY_DEFINED
-#undef yytables_fload
-#endif
-#ifndef yytables_destroy_ALREADY_DEFINED
-#undef yytables_destroy
-#endif
-#ifndef yyTABLES_NAME_ALREADY_DEFINED
-#undef yyTABLES_NAME
-#endif
-
-#line 84 "GlslLexer.lex"
+#line 153 "GlslLexer.lex"
 
 
-#line 414 "glsllexer.h"
+#line 278 "glsllexer.h"
 #undef yyIN_HEADER
 #endif /* yyHEADER_H */

@@ -2,6 +2,7 @@
 #define _QSCILEXERGLSL_H__
 
 #include <memory>
+#include <sstream>
 
 #include <Qsci/qscilexercustom.h>
 #include <Qsci/qscistyle.h>
@@ -32,7 +33,7 @@ public:
         OPERATOR,     ///<Operators
         WHITESPACE,   ///<Whitespace
         DATATYPE,     ///<GLSL datatypes
-        HASHCOMMENT,  ///<Preprocessor commands starting with #
+        PREPROCESSOR, ///<Preprocessor commands starting with #
         ILLEGAL       ///<Illegal GLSL characters
     };
 
@@ -46,6 +47,7 @@ public:
     virtual QString description(int style) const;
 
 protected:
+    void RegisterAPI();
     /**
         \brief parent QScintilla instance
     */
@@ -54,6 +56,10 @@ protected:
         \brief GLSL API instance
     */
     QsciAPIs* m_API;
+    /**
+        \brief Source stream
+    */
+    std::istringstream m_SourceInStream;
     /**
         \brief flex lexer instance
     */
