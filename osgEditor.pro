@@ -48,7 +48,9 @@ SOURCES += \
     glsl/glsllexer.cpp \
     glsl/QsciLexerGlsl.cpp \
     qglsleditor.cpp \
-    propertytreematrixtransformitem.cpp
+    propertytreematrixtransformitem.cpp \
+    propertytreeuniformlistitem.cpp \
+    propertytreeuniformitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -77,9 +79,12 @@ HEADERS += \
     glsl/QsciLexerGlsl.h \
     qglsleditor.h \
     propertytreematrixtransformitem.h \
-    propertytreeattributevectoritem.h \
-    propertytreeattributematrixitem.h \
-    propertytreeattributebaseitem.h
+    propertytreeuniformlistitem.h \
+    propertytreematrixitem.h \
+    propertytreevectoritem.h \
+    propertytreeuniformitem.h \
+    propertytreebaseitem.h \
+    propertytreeuniformunknownitem.h
 
 FORMS += \
         mainwindow.ui

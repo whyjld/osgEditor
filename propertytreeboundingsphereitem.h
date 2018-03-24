@@ -6,11 +6,11 @@
 #include <osg/ref_ptr>
 #include <osg/BoundingSphere>
 
-typedef std::function<osg::BoundingSphere()> BoundingSphereGetter_t;
-
 class PropertyTreeBoundingSphereItem : public PropertyTreeItem
 {
 public:
+    typedef std::function<osg::BoundingSphere()> BoundingSphereGetter_t;
+
     PropertyTreeBoundingSphereItem(PropertyTreeItem *parent, const QString& name, const BoundingSphereGetter_t& getter);
     virtual ~PropertyTreeBoundingSphereItem();
 

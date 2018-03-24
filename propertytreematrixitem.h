@@ -1,8 +1,8 @@
-#ifndef PROPERTYTREEATTRIBUTEMATRIXITEM_H
-#define PROPERTYTREEATTRIBUTEMATRIXITEM_H
+#ifndef PROPERTYTREEMATRIXITEM_H
+#define PROPERTYTREEMATRIXITEM_H
 
 #include "propertytreeitem.h"
-#include "propertytreeattributevectoritem.h"
+#include "propertytreevectoritem.h"
 
 #include <osg/Matrix>
 
@@ -11,10 +11,10 @@
 typedef std::function<const osg::Matrix&()> MatrixGetter_t;
 typedef std::function<void(const osg::Matrix&)> MatrixSetter_t;
 
-class PropertyTreeAttributeMatrixItem : public PropertyTreeItem
+class PropertyTreeMatrixItem : public PropertyTreeItem
 {
 public:
-    PropertyTreeAttributeMatrixItem(PropertyTreeItem *parent, const QString& name, const MatrixGetter_t& getter, const MatrixSetter_t& setter)
+    PropertyTreeMatrixItem(PropertyTreeItem *parent, const QString& name, const MatrixGetter_t& getter, const MatrixSetter_t& setter)
         : PropertyTreeItem(parent)
         , m_Getter(getter)
         , m_Setter(setter)
@@ -25,10 +25,10 @@ public:
         {
             QString name;
             name.sprintf("Row[%d]", r);
-            m_ChildItems.push_back(new PropertyTreeAttributeVectorItem<osg::Matrix::value_type>(this, name, m_Matrix(r, 0), m_Matrix(r, 1), m_Matrix(r, 2), m_Matrix(r, 3)));
+            m_ChildItems.push_back(new PropertyTreeVectorItem<osg::Matrix::value_type>(this, name, m_Matrix(r, 0), m_Matrix(r, 1), m_Matrix(r, 2), m_Matrix(r, 3)));
         }
     }
-    virtual ~PropertyTreeAttributeMatrixItem()
+    virtual ~PropertyTreeMatrixItem()
     {
 
     }
@@ -72,4 +72,4 @@ private:
     QVariant m_Name;
 };
 
-#endif // PROPERTYTREEATTRIBUTEMATRIXITEM_H
+#endif // PROPERTYTREEMATRIXITEM_H

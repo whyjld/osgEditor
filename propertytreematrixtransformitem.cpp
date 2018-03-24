@@ -1,5 +1,5 @@
 #include "propertytreematrixtransformitem.h"
-#include "propertytreeattributematrixitem.h"
+#include "propertytreematrixitem.h"
 
 PropertyTreeMatrixTransformItem::PropertyTreeMatrixTransformItem(PropertyTreeItem *parent, osg::MatrixTransform* transform)
     : PropertyTreeItem(parent)
@@ -13,7 +13,7 @@ PropertyTreeMatrixTransformItem::PropertyTreeMatrixTransformItem(PropertyTreeIte
     {
         return transform->setMatrix(m);
     };
-    m_ChildItems.append(new PropertyTreeAttributeMatrixItem(this, "Matrix", getMatrix, setMatrix));
+    m_ChildItems.append(new PropertyTreeMatrixItem(this, "Matrix", getMatrix, setMatrix));
 }
 
 PropertyTreeMatrixTransformItem::~PropertyTreeMatrixTransformItem()

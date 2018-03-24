@@ -1,5 +1,6 @@
 #include "propertytreestatesetitem.h"
 #include "propertytreemodelistitem.h"
+#include "propertytreeuniformlistitem.h"
 #include "propertytreeattributelistitem.h"
 
 #include <qpushbutton.h>
@@ -112,6 +113,7 @@ bool PropertyTreeStateSetItem::CreateStateSetProperty()
     {
         m_ChildItems.push_back(new PropertyTreeModeListItem(this, m_StateSet->getModeList()));
         m_ChildItems.push_back(new PropertyTreeAttributeListItem(this, m_StateSet->getAttributeList()));
+        m_ChildItems.push_back(new PropertyTreeUniformListItem(this, m_StateSet->getUniformList()));
 
         return true;
     }
