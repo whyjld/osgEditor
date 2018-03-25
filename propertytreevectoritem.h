@@ -8,6 +8,7 @@
 #include <osg/Vec3>
 #include <osg/Vec4>
 
+#include <functional>
 #include <ostream>
 #include <sstream>
 
@@ -15,6 +16,26 @@ template<typename Value_t>
 class PropertyTreeVectorItem : public PropertyTreeItem
 {
 public:
+    typedef std::function<Value_t(size_t)> Getter_t;
+    typedef std::function<void(size_t, Value_t)> Setter_t;
+
+    PropertyTreeVectorItem(PropertyTreeItem *parent, const QString& name, Getter_t getter, Setter_t setter, size_t e)
+        : PropertyTreeItem(parent)
+        , m_Name(name)
+    {
+        char* titles[] =
+        {
+            "X",
+            "Y",
+            "Z",
+            "W",
+        };
+        for(size_t i = 0;i < e;++i)
+        {
+            m_ChildItems.push_back(new PropertyTreeBaseItem<Value_t>(this, titles[i], std::bind(getter, i), std::bind(setter, i, std::placeholders::_1)));
+        }
+    }
+
     PropertyTreeVectorItem(PropertyTreeItem *parent, const QString& name, Value_t* v, size_t e)
         : PropertyTreeItem(parent)
         , m_Name(name)

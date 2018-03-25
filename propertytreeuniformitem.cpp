@@ -1,6 +1,5 @@
 ﻿#include "propertytreeuniformitem.h"
 #include "propertytreepropertyitem.h"
-#include "propertytreebaseitem.h"
 #include "propertytreeuniformunknownitem.h"
 
 PropertyTreeUniformItem::PropertyTreeUniformItem(PropertyTreeItem *parent, const osg::StateSet::UniformList::iterator& i)
@@ -66,33 +65,71 @@ void PropertyTreeUniformItem::UpdateChildProperty()
     }
     else if(s < e)
     {
-        QString name;
         for(auto i = s; i < e;++i)
         {
-            name.sprintf("%d", i - 1);
             PropertyTreeItem* item = nullptr;
             switch(m_Uniform.first->getType())
             {
             case osg::Uniform::FLOAT:
+                item = CreateBaseItem<float>(i - c_NotValueElement);
+                break;
             case osg::Uniform::FLOAT_VEC2:
+                item = CreateVectorItem<osg::Vec2f>(i - c_NotValueElement);
+                break;
             case osg::Uniform::FLOAT_VEC3:
+                item = CreateVectorItem<osg::Vec3f>(i - c_NotValueElement);
+                break;
             case osg::Uniform::FLOAT_VEC4:
+                item = CreateVectorItem<osg::Vec4f>(i - c_NotValueElement);
+                break;
             case osg::Uniform::DOUBLE:
+                item = CreateBaseItem<double>(i - c_NotValueElement);
+                break;
             case osg::Uniform::DOUBLE_VEC2:
+                item = CreateVectorItem<osg::Vec2d>(i - c_NotValueElement);
+                break;
             case osg::Uniform::DOUBLE_VEC3:
+                item = CreateVectorItem<osg::Vec3d>(i - c_NotValueElement);
+                break;
             case osg::Uniform::DOUBLE_VEC4:
+                item = CreateVectorItem<osg::Vec4d>(i - c_NotValueElement);
+                break;
             case osg::Uniform::INT:
+                item = CreateBaseItem<int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::INT_VEC2:
+                item = CreateVector2Item<int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::INT_VEC3:
+                item = CreateVector3Item<int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::INT_VEC4:
+                item = CreateVector4Item<int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::UNSIGNED_INT:
+                item = CreateBaseItem<unsigned int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::UNSIGNED_INT_VEC2:
+                item = CreateVector2Item<unsigned int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::UNSIGNED_INT_VEC3:
+                item = CreateVector3Item<unsigned int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::UNSIGNED_INT_VEC4:
+                item = CreateVector4Item<unsigned int>(i - c_NotValueElement);
+                break;
             case osg::Uniform::BOOL:
+                item = CreateBaseItem<bool>(i - c_NotValueElement);
+                break;
             case osg::Uniform::BOOL_VEC2:
+                item = CreateVector2Item<bool>(i - c_NotValueElement);
+                break;
             case osg::Uniform::BOOL_VEC3:
+                item = CreateVector3Item<bool>(i - c_NotValueElement);
+                break;
             case osg::Uniform::BOOL_VEC4:
+                item = CreateVector4Item<bool>(i - c_NotValueElement);
+                break;
             case osg::Uniform::FLOAT_MAT2:
             case osg::Uniform::FLOAT_MAT3:
             case osg::Uniform::FLOAT_MAT4:
@@ -185,7 +222,7 @@ void PropertyTreeUniformItem::UpdateChildProperty()
             case osg::Uniform::UNSIGNED_INT_IMAGE_2D_MULTISAMPLE:
             case osg::Uniform::UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
             default:
-                item = new PropertyTreeUniformUnknownItem(this, name);
+                item = new PropertyTreeUniformUnknownItem(this, QString::number(i - c_NotValueElement + 1, 10));
                 break;
             }
             m_ChildItems.push_back(item);
