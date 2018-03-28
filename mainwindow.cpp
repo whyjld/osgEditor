@@ -376,3 +376,8 @@ void MainWindow::on_actionShader_Source_toggled(bool arg1)
         ui->dwSource->setVisible(arg1);
     }
 }
+
+void MainWindow::on_pbSSApply_clicked()
+{
+    ui->qsShaderSource->apply();
+}

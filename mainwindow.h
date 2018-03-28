@@ -54,6 +54,8 @@ private slots:
 
     void on_actionShader_Source_toggled(bool arg1);
 
+    void on_pbSSApply_clicked();
+
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();

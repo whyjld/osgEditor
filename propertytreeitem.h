@@ -36,7 +36,13 @@ public:
     virtual QVariant data(int column, int role) const;
     virtual bool setData(int column, const QVariant &value, int role);
 
-    //tree delegate
+    //tree item paint
+    virtual bool paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual bool afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual bool sizeHint(QSize& size, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+
+    //tree item editor
     virtual bool createEditor(QWidget*& editor, QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
     virtual bool setEditorData(QWidget* editor,const QModelIndex& index) const;
     virtual bool setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;

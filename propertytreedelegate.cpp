@@ -9,6 +9,47 @@ PropertyTreeDelegate::PropertyTreeDelegate(QObject *parent)
 
 }
 
+void PropertyTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    PropertyTreeItem* item = (PropertyTreeItem*)index.internalPointer();
+    if(nullptr == item || !item->paint(painter, option, index))
+    {
+        QStyledItemDelegate::paint(painter, option, index);
+    }
+    if(nullptr != item)
+    {
+        item->afterPaint(painter, option, index);
+    }
+}
+
+
+QSize PropertyTreeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    PropertyTreeItem* item = (PropertyTreeItem*)index.internalPointer();
+    if(nullptr != item)
+    {
+        QSize size;
+        if(item->sizeHint(size, option, index))
+        {
+            return size;
+        }
+    }
+    return QStyledItemDelegate::sizeHint(option, index);
+}
+
+bool PropertyTreeDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    PropertyTreeItem* item = (PropertyTreeItem*)index.internalPointer();
+    if(nullptr != item)
+    {
+        if(item->editorEvent(event, model, option, index))
+        {
+            return true;
+        }
+    }
+    return QStyledItemDelegate::editorEvent(event, model, option, index);
+}
+
 QWidget* PropertyTreeDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     PropertyTreeItem* item = (PropertyTreeItem*)index.internalPointer();

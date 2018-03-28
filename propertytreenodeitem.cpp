@@ -1,5 +1,7 @@
 #include "propertytreenodeitem.h"
+#include "propertytreebaseitem.h"
 #include "propertytreepropertyitem.h"
+#include "propertytreenodemask.h"
 #include "propertytreeboundingsphereitem.h"
 #include "propertytreestatesetitem.h"
 
@@ -7,15 +9,15 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
     : PropertyTreeItem(parent)
 {
     //CullingActive
-    auto CullingActiveSetter = [node](const QVariant& v)
+    auto CullingActiveSetter = [node](bool v)
     {
-        node->setCullingActive(v.toBool());
+        node->setCullingActive(v);
     };
-    auto CullingActiveGetter = [node]()->QVariant
+    auto CullingActiveGetter = [node]()->bool
     {
-        return QVariant(node->getCullingActive());
+        return node->getCullingActive();
     };
-    m_ChildItems.append(new PropertyTreePropertyItem(this, "CullingActive", CullingActiveSetter, CullingActiveGetter));
+    m_ChildItems.append(new PropertyTreeBaseItem<bool>(this, "CullingActive", CullingActiveGetter, CullingActiveSetter));
 
     //getNumChildrenWithCullingDisabled
     auto getNumChildrenWithCullingDisabledGetter = [node]()->QVariant
@@ -46,15 +48,7 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
     m_ChildItems.append(new PropertyTreePropertyItem(this, "containsOccluderNodes", containsOccluderNodesGetter));
 
     //NodeMask
-    auto NodeMaskSetter = [node](const QVariant& v)
-    {
-        node->setNodeMask(v.toUInt());
-    };
-    auto NodeMaskGetter = [node]()->QVariant
-    {
-        return QVariant(node->getNodeMask());
-    };
-    m_ChildItems.append(new PropertyTreePropertyItem(this, "NodeMask", NodeMaskSetter, NodeMaskGetter));
+    m_ChildItems.append(new PropertyTreeNodeMask(this, node));
 
     //getBound
     auto getBoundGetter = [node]()->osg::BoundingSphere

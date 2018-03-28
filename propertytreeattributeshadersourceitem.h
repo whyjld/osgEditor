@@ -16,16 +16,18 @@ public:
     virtual QVariant data(int column, int role) const;
     virtual bool setData(int column, const QVariant &value, int role);
 
-    virtual bool createEditor(QWidget*& editor, QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    virtual bool setEditorData(QWidget* editor,const QModelIndex& index) const;
-    virtual bool setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
-    virtual bool updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    virtual bool afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+
 private slots:
     void buttonClicked();
 
 private:
     void ChangeValue();
-    QVariant m_Value;
+
+    QString m_Value;
+    QStyle::State m_State;
+    mutable QRect m_ButtonRect;
 };
 
 #endif // PROPERTYTREEATTRIBUTESHADERSOURCEITEM_H

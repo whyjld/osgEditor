@@ -86,7 +86,16 @@ void QGLSLEditor::setShader(osg::Shader* shader)
             m_Changed = false;
         }
         m_Shader = shader;
-        this->setText(m_Shader->getShaderSource().c_str());
+        setText(m_Shader->getShaderSource().c_str());
+    }
+}
+
+void QGLSLEditor::apply()
+{
+    if(!!m_Shader)
+    {
+        m_Shader->setShaderSource(text().toStdString());
+        m_Changed = false;
     }
 }
 
@@ -259,6 +268,7 @@ void QGLSLEditor::charAdded(int c)
         braceIndent();
         break;
     }
+    m_Changed = true;
 }
 
 void QGLSLEditor::resetHighlightColour()

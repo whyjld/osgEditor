@@ -50,7 +50,8 @@ SOURCES += \
     qglsleditor.cpp \
     propertytreematrixtransformitem.cpp \
     propertytreeuniformlistitem.cpp \
-    propertytreeuniformitem.cpp
+    propertytreeuniformitem.cpp \
+    propertytreenodemask.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -84,7 +85,8 @@ HEADERS += \
     propertytreevectoritem.h \
     propertytreeuniformitem.h \
     propertytreebaseitem.h \
-    propertytreeuniformunknownitem.h
+    propertytreeuniformunknownitem.h \
+    propertytreenodemask.h
 
 FORMS += \
         mainwindow.ui

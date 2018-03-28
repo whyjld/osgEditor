@@ -39,7 +39,7 @@ private:
             m_Uniform.first->setElement(index, v);
         };
 
-        return new PropertyTreeBaseItem<float>(this, QString::number(index + 1, 10), getter, setter);
+        return new PropertyTreeBaseItem<Type_t>(this, QString::number(index + 1, 10), getter, setter);
     }
 
     template<typename Type_t> PropertyTreeItem* CreateVectorItem(unsigned int index)

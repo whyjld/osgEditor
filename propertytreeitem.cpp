@@ -115,11 +115,43 @@ QVariant PropertyTreeItem::data(int column, int role) const
     return QVariant();
 }
 
+bool PropertyTreeItem::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    (painter);
+    (option);
+    (index);
+    return false;
+}
+
+bool PropertyTreeItem::afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    (painter);
+    (option);
+    (index);
+    return false;
+}
+
+bool PropertyTreeItem::sizeHint(QSize& size, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    (option);
+    (index);
+    return false;
+}
+
 bool PropertyTreeItem::setData(int column, const QVariant &value, int role)
 {
     (column);
     (value);
     (role);
+    return false;
+}
+
+bool PropertyTreeItem::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    (event);
+    (model);
+    (option);
+    (index);
     return false;
 }
 

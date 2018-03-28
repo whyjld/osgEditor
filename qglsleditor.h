@@ -22,6 +22,7 @@ public:
     void setSearchWidget(QWidget* searchWidget, QLineEdit* searchLineEdit);
 
     void setShader(osg::Shader* shader);
+    void apply();
 public slots:
     void clearErrors();
     void searchNext();

@@ -5,12 +5,17 @@
 #include "propertytreemodel.h"
 #include "mainwindow.h"
 
+#include <QApplication>
+#include <QPainter>
 #include <QPushButton>
 
 #include <sstream>
 
+const QString g_BtnText = QObject::tr("edit");
+
 PropertyTreeAttributeShaderSourceItem::PropertyTreeAttributeShaderSourceItem(PropertyTreeItem *parent)
     : PropertyTreeItem(parent)
+    , m_State(QStyle::State_Raised)
 {
     ChangeValue();
 }
@@ -21,7 +26,7 @@ PropertyTreeAttributeShaderSourceItem::~PropertyTreeAttributeShaderSourceItem()
 
 Qt::ItemFlags PropertyTreeAttributeShaderSourceItem::flags(int column) const
 {
-    return ((ptcValue == column) ? Qt::ItemIsEditable : 0) | PropertyTreeItem::flags(column);
+    return PropertyTreeItem::flags(column);
 }
 
 QVariant PropertyTreeAttributeShaderSourceItem::data(int column, int role) const
@@ -49,43 +54,56 @@ bool PropertyTreeAttributeShaderSourceItem::setData(int column, const QVariant &
     return true;
 }
 
-bool PropertyTreeAttributeShaderSourceItem::createEditor(QWidget*& editor, QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+bool PropertyTreeAttributeShaderSourceItem::afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    (option);
-    (index);
-    QPushButton* btn = new QPushButton(parent);
-    btn->setText("...");
-    connect(btn, &QPushButton::released, this, &PropertyTreeAttributeShaderSourceItem::buttonClicked);
-
-    editor = btn;
-    return true;
-}
-
-bool PropertyTreeAttributeShaderSourceItem::setEditorData(QWidget* editor,const QModelIndex& index) const
-{
-    (editor);
-    (index);
-    return true;
-}
-
-bool PropertyTreeAttributeShaderSourceItem::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
-{
-    (editor);
-    (model);
-    (index);
-    return true;
-}
-
-bool PropertyTreeAttributeShaderSourceItem::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    (index);
-    QRect rect = option.rect;
-    if(rect.width() > rect.height())
+    const int btnWidth = QApplication::fontMetrics().width(g_BtnText) + 6;
+    if(ptcValue == index.column())
     {
-        rect.setLeft(rect.right() - rect.height());
+        m_ButtonRect = option.rect;
+        if(m_ButtonRect.width() > btnWidth)
+        {
+            m_ButtonRect.setX(m_ButtonRect.right() - btnWidth);
+        }
+
+        QStyleOptionButton opt;
+        opt.palette = QPalette(Qt::red);
+        opt.state = m_State | QStyle::State_Enabled;
+        opt.text = g_BtnText;
+        opt.rect = m_ButtonRect;
+        QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
     }
-    editor->setGeometry(rect);
+
     return true;
+}
+
+bool PropertyTreeAttributeShaderSourceItem::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    (index);
+    (model);
+    (option);
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent*>(event);
+    if(nullptr != mouseEvent)
+    {
+        if(Qt::LeftButton == mouseEvent->button() && m_ButtonRect.contains(mouseEvent->pos()))
+        {
+            switch(event->type())
+            {
+            case QEvent::MouseButtonPress:
+                m_State = QStyle::State_Sunken;
+                break;
+            case QEvent::MouseButtonRelease:
+                m_State = QStyle::State_Raised;
+                buttonClicked();
+                break;
+            default:
+                m_State = QStyle::State_Raised;
+                break;
+            }
+            return true;
+        }
+    }
+    m_State = QStyle::State_Raised;
+    return false;
 }
 
 void PropertyTreeAttributeShaderSourceItem::buttonClicked()
@@ -103,15 +121,14 @@ void PropertyTreeAttributeShaderSourceItem::ChangeValue()
     PropertyTreeAttributeShaderItem* parent = dynamic_cast<PropertyTreeAttributeShaderItem*>(m_ParentItem);
     if(nullptr != parent)
     {
+        m_Value.clear();
+
         std::stringstream ss(parent->Shader->getShaderSource());
         std::string line;
         for(std::getline(ss, line);!ss.eof();std::getline(ss, line))
         {
-            if(line.length() > 0)
-            {
-                break;
-            }
+            m_Value += line.c_str();
+            m_Value += " ";
         }
-        m_Value = (line + " ...").c_str();
     }
 }
