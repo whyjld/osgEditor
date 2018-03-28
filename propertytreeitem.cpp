@@ -2,6 +2,7 @@
 #include "propertytreeobjectitem.h"
 #include "propertytreenodeitem.h"
 #include "propertytreematrixtransformitem.h"
+#include "propertytreepositionattitudetransformitem.h"
 #include <QStringList>
 #include <osg/Group>
 #include <osg/Geode>
@@ -32,6 +33,11 @@ PropertyTreeItem::PropertyTreeItem(PropertyTreeModel* model, osg::Object* object
     if(mt != nullptr)
     {
         m_ChildItems.append(new PropertyTreeMatrixTransformItem(this, mt));
+    }
+    osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*>(object);
+    if(pat != nullptr)
+    {
+        m_ChildItems.append(new PropertyTreePositionAttitudeTransformItem(this, pat));
     }
 }
 

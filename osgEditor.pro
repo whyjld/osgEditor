@@ -51,7 +51,8 @@ SOURCES += \
     propertytreematrixtransformitem.cpp \
     propertytreeuniformlistitem.cpp \
     propertytreeuniformitem.cpp \
-    propertytreenodemask.cpp
+    propertytreenodemask.cpp \
+    propertytreepositionattitudetransformitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -86,7 +87,8 @@ HEADERS += \
     propertytreeuniformitem.h \
     propertytreebaseitem.h \
     propertytreeuniformunknownitem.h \
-    propertytreenodemask.h
+    propertytreenodemask.h \
+    propertytreepositionattitudetransformitem.h
 
 FORMS += \
         mainwindow.ui

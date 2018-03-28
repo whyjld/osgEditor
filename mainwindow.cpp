@@ -229,7 +229,7 @@ void MainWindow::on_action_Open_triggered()
     openDialog->setFileMode(QFileDialog::ExistingFile);
 
     QStringList filters;
-    filters << tr("Scene Files(*.osg *.osgb)") << tr("OSG Files(*.osg)") << tr("OSG Binary Files(*.osgb)") << tr("All Files(*.*)");
+    filters << tr("Scene Files(*.osg *.osgb *.osgt)") << tr("OSG Files(*.osg)") << tr("OSG Binary Files(*.osgb)") << tr("OSG ASCII Files(*.osgt)") << tr("All Files(*.*)");
     openDialog->setNameFilters(filters);
     if(QDialog::Accepted == openDialog->exec())
     {
