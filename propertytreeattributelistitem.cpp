@@ -1,13 +1,15 @@
 ﻿#include "propertytreeattributelistitem.h"
 #include "propertytreeattributeunknownitem.h"
-
 #include "propertytreeattributeprogramitem.h"
 
-#include <QPushButton>
+#include <QApplication>
+
+const QString g_BtnText = QObject::tr("add");
 
 PropertyTreeAttributeListItem::PropertyTreeAttributeListItem(PropertyTreeItem *parent, osg::StateSet::AttributeList& attributeList)
     : PropertyTreeItem(parent)
     , AttributeList(attributeList)
+    , m_State(QStyle::State_Raised)
 {
     for(auto i = AttributeList.begin();i != AttributeList.end();++i)
     {
@@ -174,4 +176,61 @@ bool PropertyTreeAttributeListItem::setData(int column, const QVariant &value, i
     (value);
     (role);
     return true;
+}
+
+bool PropertyTreeAttributeListItem::afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    const int btnWidth = QApplication::fontMetrics().width(g_BtnText) + 26;
+    if(ptcValue == index.column())
+    {
+        m_ButtonRect = option.rect;
+        if(m_ButtonRect.width() > btnWidth)
+        {
+            m_ButtonRect.setX(m_ButtonRect.right() - btnWidth);
+        }
+
+        QStyleOptionButton opt;
+        opt.palette = QPalette(Qt::red);
+        opt.state = m_State | QStyle::State_Enabled;
+        opt.text = g_BtnText;
+        opt.rect = m_ButtonRect;
+        QApplication::style()->drawControl(QStyle::CE_PushButton, &opt, painter);
+    }
+
+    return true;
+}
+
+bool PropertyTreeAttributeListItem::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    (index);
+    (model);
+    (option);
+    QMouseEvent *mouseEvent = dynamic_cast<QMouseEvent*>(event);
+    if(nullptr != mouseEvent)
+    {
+        if(Qt::LeftButton == mouseEvent->button() && m_ButtonRect.contains(mouseEvent->pos()))
+        {
+            switch(event->type())
+            {
+            case QEvent::MouseButtonPress:
+                m_State = QStyle::State_Sunken;
+                break;
+            case QEvent::MouseButtonRelease:
+                m_State = QStyle::State_Raised;
+                buttonClicked();
+                break;
+            default:
+                m_State = QStyle::State_Raised;
+                break;
+            }
+            return true;
+        }
+    }
+    m_State = QStyle::State_Raised;
+    return false;
+}
+
+void PropertyTreeAttributeListItem::buttonClicked()
+{
+
 }

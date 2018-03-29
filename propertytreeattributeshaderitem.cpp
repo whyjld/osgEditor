@@ -1,7 +1,7 @@
 ﻿#include "propertytreeattributeshaderitem.h"
 #include "propertytreeattributeshadersourceitem.h"
 #include "propertytreeattributelistitem.h"
-#include "propertytreepropertyitem.h"
+#include "propertytreefilenameitem.h"
 
 PropertyTreeAttributeShaderItem::PropertyTreeAttributeShaderItem(PropertyTreeItem *parent, osg::Shader* shader)
     : PropertyTreeItem(parent)
@@ -9,15 +9,15 @@ PropertyTreeAttributeShaderItem::PropertyTreeAttributeShaderItem(PropertyTreeIte
 {
     //Filename
     {
-        auto getter = [this]()->QVariant
+        auto getter = [this]()->QString
         {
-            return QVariant(Shader->getFileName().c_str());
+            return QString(Shader->getFileName().c_str());
         };
-        auto setter = [this](const QVariant& value)
+        auto setter = [this](const QString& value)
         {
-            Shader->setFileName(value.toString().toStdString());
+            Shader->setFileName(value.toStdString());
         };
-        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "FileName", setter, getter));
+        m_ChildItems.push_back(new PropertyTreeFilenameItem(this, "FileName", getter, setter));
     }
     //ShaderSource
     m_ChildItems.push_back(new PropertyTreeAttributeShaderSourceItem(this));

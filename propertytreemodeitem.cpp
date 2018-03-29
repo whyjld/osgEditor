@@ -11,6 +11,7 @@ GLenum c_Enums[] =
     GL_BLEND,
     GL_COLOR_LOGIC_OP,
     GL_CULL_FACE,
+    GL_LIGHTING,
 #if defined(GL_ARB_debug_output)
     GL_DEBUG_OUTPUT,
     GL_DEBUG_OUTPUT_SYNCHRONOUS,
@@ -49,6 +50,7 @@ char* c_Names[] =
     "GL_BLEND",
     "GL_COLOR_LOGIC_OP",
     "GL_CULL_FACE",
+    "GL_LIGHTING",
 #if defined(GL_ARB_debug_output)
     "GL_DEBUG_OUTPUT",
     "GL_DEBUG_OUTPUT_SYNCHRONOUS",
@@ -87,6 +89,7 @@ char* c_Hints[] =
     "If enabled, blend the computed fragment color values with the values in the color buffers. See glBlendFunc.",
     "If enabled, apply the currently selected logical operation to the computed fragment color and color buffer values. See glLogicOp.",
     "If enabled, cull polygons based on their winding in window coordinates. See glCullFace.",
+    "",
 #if defined(GL_ARB_debug_output)
     "If enabled, debug messages are produced by a debug context. When disabled, the debug message log is silenced. Note that in a non-debug context, very few, if any messages might be produced, even when GL_DEBUG_OUTPUT is enabled.",
     "If enabled, debug messages are produced synchronously by a debug context. If disabled, debug messages may be produced asynchronously. In particular, they may be delayed relative to the execution of GL commands, and the debug callback function may be called from a thread other than that in which the commands are executed. See glDebugMessageCallback.",
@@ -134,7 +137,7 @@ PropertyTreeModeItem::PropertyTreeModeItem(PropertyTreeItem *parent, osg::StateA
     }
     if(!m_Name.isValid())
     {
-        m_Name = QVariant(tr("Unknown"));
+        m_Name = QVariant(tr("Unknown:0x") + QString::number(mode, 16));
     }
 }
 

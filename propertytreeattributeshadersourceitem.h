@@ -19,10 +19,8 @@ public:
     virtual bool afterPaint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
-private slots:
-    void buttonClicked();
-
 private:
+    void buttonClicked();
     void ChangeValue();
 
     QString m_Value;
