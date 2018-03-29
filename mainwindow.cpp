@@ -33,7 +33,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->wSearch->setVisible(false);
     ui->wReplace->setVisible(false);
 
-    ui->qsShaderSource->setSearchWidget(ui->wSearch, ui->leSearch);
+    ui->qsShaderSource->setSearchWidget(ui->wSearch, ui->leSearch, ui->leReplace);
+    connect(ui->pbNext, SIGNAL(clicked()), ui->qsShaderSource, SLOT(searchNext()));
+    connect(ui->pbReplace, SIGNAL(clicked()), ui->qsShaderSource, SLOT(replace()));
+    connect(ui->pbReplaceAll, SIGNAL(clicked()), ui->qsShaderSource, SLOT(replaceAll()));
 
     m_SelectScribe->setEnabled(true);
     m_SelectScribe->setWireframeColor(osg::Vec4(0.0, 0.0, 1.0, 1.0));
@@ -380,4 +383,38 @@ void MainWindow::on_actionShader_Source_toggled(bool arg1)
 void MainWindow::on_pbSSApply_clicked()
 {
     ui->qsShaderSource->apply();
+}
+
+void MainWindow::on_action_Find_toggled(bool arg1)
+{
+    if(ui->wSearch->isVisible() != arg1)
+    {
+        if(arg1)
+        {
+            if(ui->wReplace->isVisible())
+            {
+                ui->wReplace->setVisible(false);
+            }
+        }
+        ui->wSearch->setVisible(arg1);
+        ui->leSearch->setFocus();
+    }
+}
+
+void MainWindow::on_actionReplace_toggled(bool arg1)
+{
+    if(ui->wReplace->isVisible() != arg1)
+    {
+        ui->wReplace->setVisible(arg1);
+        if(ui->wSearch->isVisible() != arg1)
+        {
+            ui->wSearch->setVisible(arg1);
+        }
+        ui->leSearch->setFocus();
+    }
+}
+
+void MainWindow::on_pbClose_clicked()
+{
+    ui->action_Find->setChecked(false);
 }

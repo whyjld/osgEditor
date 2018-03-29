@@ -11,6 +11,7 @@ QGLSLEditor::QGLSLEditor(QWidget *parent)
     : QsciScintilla(parent)
     , m_SearchWidget(nullptr)
     , m_SearchLineEdit(nullptr)
+    , m_ReplaceLineEdit(nullptr)
     , m_Changed(false)
 {
     setLexer(new QsciLexerGLSL(this));
@@ -65,12 +66,14 @@ QGLSLEditor::QGLSLEditor(QWidget *parent)
     connect(this, SIGNAL(SCN_FOCUSIN()), this, SLOT(resetHighlightColour()));
 }
 
-void QGLSLEditor::setSearchWidget(QWidget* searchWidget, QLineEdit* searchLineEdit)
+void QGLSLEditor::setSearchWidget(QWidget* searchWidget, QLineEdit* searchLineEdit, QLineEdit* replaceLineEdit)
 {
     m_SearchWidget = searchWidget;
     m_SearchLineEdit = searchLineEdit;
+    m_ReplaceLineEdit = replaceLineEdit;
 
     connect(m_SearchLineEdit, SIGNAL(returnPressed()), this, SLOT(searchNext()));
+    connect(m_ReplaceLineEdit, SIGNAL(returnPressed()), this, SLOT(replace()));
 }
 
 void QGLSLEditor::setShader(osg::Shader* shader)
@@ -152,6 +155,37 @@ void QGLSLEditor::highlightAllSearch(const QString& text)
 {
     (text);
     highlightAllSearch();
+}
+
+void QGLSLEditor::replace()
+{
+    QString st = m_SearchLineEdit->text();
+    QString rt = m_ReplaceLineEdit->text();
+    if(st.length() > 0 && findFirst(st, false, false, false, true))
+    {
+        if(st != rt)
+        {
+            QsciScintilla::replace(rt);
+        }
+        setSelectionBackgroundColor(QColor(230, 219, 116));
+        setSelectionForegroundColor(QColor(39,40,34));
+    }
+}
+
+void QGLSLEditor::replaceAll()
+{
+    QString st = m_SearchLineEdit->text();
+    QString rt = m_ReplaceLineEdit->text();
+    if(st.length() > 0 && st != rt)
+    {
+        bool found;
+        for(found = findFirst(st, false, false, false, true);
+            found;
+            found = findNext())
+        {
+            QsciScintilla::replace(rt);
+        }
+    }
 }
 
 void QGLSLEditor::toggleSearchBox()

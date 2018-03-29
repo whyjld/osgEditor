@@ -56,6 +56,12 @@ private slots:
 
     void on_pbSSApply_clicked();
 
+    void on_action_Find_toggled(bool arg1);
+
+    void on_actionReplace_toggled(bool arg1);
+
+    void on_pbClose_clicked();
+
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();

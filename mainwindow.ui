@@ -243,7 +243,7 @@
                <widget class="QLineEdit" name="leSearch"/>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_3">
+               <widget class="QPushButton" name="pbNext">
                 <property name="minimumSize">
                  <size>
                   <width>80</width>
@@ -262,7 +262,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_4">
+               <widget class="QPushButton" name="pbClose">
                 <property name="minimumSize">
                  <size>
                   <width>80</width>
@@ -325,7 +325,7 @@
                   <widget class="QLineEdit" name="leReplace"/>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton">
+                  <widget class="QPushButton" name="pbReplace">
                    <property name="minimumSize">
                     <size>
                      <width>80</width>
@@ -344,7 +344,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="pbReplaceAll">
                    <property name="minimumSize">
                     <size>
                      <width>80</width>
@@ -474,11 +474,17 @@
    </property>
   </action>
   <action name="action_Find">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Find</string>
    </property>
   </action>
   <action name="actionReplace">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Replace</string>
    </property>

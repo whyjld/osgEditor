@@ -19,7 +19,7 @@ public:
 
     explicit QGLSLEditor(QWidget *parent = 0);
 
-    void setSearchWidget(QWidget* searchWidget, QLineEdit* searchLineEdit);
+    void setSearchWidget(QWidget* searchWidget, QLineEdit* searchLineEdit, QLineEdit* replaceLineEdit);
 
     void setShader(osg::Shader* shader);
     void apply();
@@ -29,6 +29,8 @@ public slots:
     void searchPrev();
     void highlightAllSearch();
     void highlightAllSearch(const QString& text);
+    void replace();
+    void replaceAll();
     void toggleSearchBox();
 
 private slots:
@@ -43,6 +45,7 @@ private:
 
     QWidget* m_SearchWidget;
     QLineEdit* m_SearchLineEdit;
+    QLineEdit* m_ReplaceLineEdit;
     std::vector<int>  m_FileMarkers;
     int m_SearchIndicator;
 
