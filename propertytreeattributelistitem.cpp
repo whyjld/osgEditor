@@ -1,8 +1,13 @@
 ﻿#include "propertytreeattributelistitem.h"
 #include "propertytreeattributeunknownitem.h"
 #include "propertytreeattributeprogramitem.h"
+#include "addattributedialog.h"
+#include "propertytreemodel.h"
 
 #include <QApplication>
+#include <QMessageBox>
+
+#include <memory>
 
 const QString g_BtnText = QObject::tr("add");
 
@@ -88,7 +93,7 @@ PropertyTreeAttributeListItem::PropertyTreeAttributeListItem(PropertyTreeItem *p
 //        case POINTSPRITE:
 //            break;
         case osg::StateAttribute::PROGRAM:
-            m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, i->first));
+            m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, dynamic_cast<osg::Program*>(i->second.first.get())));
             break;
 //        case CLAMPCOLOR:
 //            break;
@@ -232,5 +237,25 @@ bool PropertyTreeAttributeListItem::editorEvent(QEvent *event, QAbstractItemMode
 
 void PropertyTreeAttributeListItem::buttonClicked()
 {
+    osg::StateAttribute::Type type;
+    std::shared_ptr<AddAttributeDialog> dialog(new AddAttributeDialog(AttributeList));
+    if(QDialog::Accepted == dialog->exec(type))
+    {
+        if(osg::StateAttribute::PROGRAM == type)
+        {
+            osg::ref_ptr<osg::Program> program(new osg::Program());
 
+            osg::StateAttribute::TypeMemberPair key(osg::StateAttribute::PROGRAM, 0);
+            osg::StateSet::RefAttributePair value(program, osg::StateAttribute::ON);
+            AttributeList[key] = value;
+
+            m_Model->beginResetModel();
+            m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, program));
+            m_Model->endResetModel();
+        }
+        else
+        {
+            QMessageBox::warning(QApplication::activeWindow(), tr("Warning"), tr("Unknown attribute."), QMessageBox::Ok);
+        }
+    }
 }

@@ -36,6 +36,16 @@ public:
 
     void setObject(const osg::ref_ptr<osg::Object>& obj);
 
+    void beginResetModel()
+    {
+        QAbstractItemModel::beginResetModel();
+    }
+    void endResetModel()
+    {
+        QAbstractItemModel::endResetModel();
+    }
+
+
     QObject* Window;
 private:
     std::shared_ptr<PropertyTreeItem> m_RootItem;
