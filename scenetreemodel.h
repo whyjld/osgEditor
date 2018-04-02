@@ -38,6 +38,8 @@ public:
 
     QModelIndex index(const osg::NodePath& path);
 
+    bool insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node);
+
     void ShowAll();
     void HideAllExpect(size_t i);
 private:

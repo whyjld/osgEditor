@@ -22,6 +22,11 @@ void SceneTreeView::onSelectNode(const osg::NodePath& path)
     selectionModel()->setCurrentIndex(((SceneTreeModel*)model())->index(path), QItemSelectionModel::SelectCurrent);
 }
 
+bool SceneTreeView::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node)
+{
+    return ((SceneTreeModel*)model())->insertNode(index, node);
+}
+
 void SceneTreeView::onCustomContextMenuRequested(const QPoint& pos)
 {
     m_MenuIndex = indexAt(pos);

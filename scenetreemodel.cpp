@@ -191,6 +191,21 @@ QModelIndex SceneTreeModel::index(const osg::NodePath& path)
     }
 }
 
+bool SceneTreeModel::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node)
+{
+    SceneTreeItem* item = (SceneTreeItem*)index.internalPointer();
+    osg::Group* group = item->getNode()->asGroup();
+    if(group != nullptr)
+    {
+        size_t pos = group->getNumChildren();
+        beginInsertRows(index, pos, pos);
+        item->addChild(node);
+        endInsertRows();
+        return true;
+    }
+    return false;
+}
+
 void SceneTreeModel::ShowAll()
 {
     for(size_t i = 0;i < m_RootItem->childCount();++i)

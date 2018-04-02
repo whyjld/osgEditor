@@ -179,28 +179,12 @@ bool SceneTreeItem::removeChild(osg::Node* node)
     return false;
 }
 
-size_t SceneTreeItem::insertChild(osg::Node* node, size_t pos)
+void SceneTreeItem::addChild(osg::Node* node)
 {
-    if(node != nullptr)
+    osg::ref_ptr<osg::Group> group(m_Node->asGroup());
+    if(!!group)
     {
-        osg::ref_ptr<osg::Group> group(m_Node->asGroup());
-        if(!!group)
-        {
-            if(pos < group->getNumChildren())
-            {
-                group->insertChild(pos, node);
-                m_ChildItems.insert(pos, new SceneTreeItem(node, this));
-
-                return pos;
-            }
-            else
-            {
-                group->addChild(node);
-                m_ChildItems.append(new SceneTreeItem(node, this));
-
-                return m_ChildItems.size() - 1;
-            }
-        }
+        group->addChild(node);
+        m_ChildItems.append(new SceneTreeItem(node, this));
     }
-    return size_t(-1);
 }

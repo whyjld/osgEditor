@@ -29,7 +29,7 @@ public:
     SceneTreeItem *parentItem();
 
     bool removeChild(osg::Node* node);
-    size_t insertChild(osg::Node* node, size_t pos = size_t(-1));
+    void addChild(osg::Node* node);
 
     osg::Node* getNode() const
     {

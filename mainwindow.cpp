@@ -427,52 +427,43 @@ void MainWindow::on_tvSceneTree_createChild(const QModelIndex &index)
 {
     if(index.isValid())
     {
-        SceneTreeItem* item = (SceneTreeItem*)index.internalPointer();
-        if(item->getNode() != nullptr)
+        CreateNodeDialog::NodeType type;
+        std::shared_ptr<CreateNodeDialog> dialog(new CreateNodeDialog(this));
+        if(dialog->exec(type))
         {
-            osg::Group* group = dynamic_cast<osg::Group*>((osg::Node*)item->getNode());
-            if(nullptr != group)
+            osg::ref_ptr<osg::Node> node;
+            switch(type)
             {
-                CreateNodeDialog::NodeType type;
-                std::shared_ptr<CreateNodeDialog> dialog(new CreateNodeDialog(this));
-                if(dialog->exec(type))
+            case CreateNodeDialog::ntGroup:
+                node = new osg::Group();
+                break;
+            case CreateNodeDialog::ntMatrixTransform:
+                node = new osg::MatrixTransform();
+                break;
+            case CreateNodeDialog::ntPositionAttitudeTransform:
+                node = new osg::PositionAttitudeTransform();
+                break;
+            case CreateNodeDialog::ntCamera:
+                node = new osg::Camera();
+                break;
+            case CreateNodeDialog::ntSwitch:
+                node = new osg::Switch();
+                break;
+            case CreateNodeDialog::ntGeode:
+                node = new osg::Geode();
+                break;
+            default:
+                QMessageBox::warning(this, tr("Warning"), tr("Invalid node type"));
+                break;
+            }
+            if(!!node)
+            {
+                if(!dialog->getName().isEmpty())
                 {
-                    osg::ref_ptr<osg::Node> node;
-                    switch(type)
-                    {
-                    case CreateNodeDialog::ntGroup:
-                        node = new osg::Group();
-                        break;
-                    case CreateNodeDialog::ntMatrixTransform:
-                        node = new osg::MatrixTransform();
-                        break;
-                    case CreateNodeDialog::ntPositionAttitudeTransform:
-                        node = new osg::PositionAttitudeTransform();
-                        break;
-                    case CreateNodeDialog::ntCamera:
-                        node = new osg::Camera();
-                        break;
-                    case CreateNodeDialog::ntSwitch:
-                        node = new osg::Switch();
-                        break;
-                    case CreateNodeDialog::ntGeode:
-                        node = new osg::Geode();
-                        break;
-                    default:
-                        QMessageBox::warning(this, tr("Warning"), tr("Invalid node type"));
-                        break;
-                    }
-                    if(!!node)
-                    {
-                        if(!dialog->getName().isEmpty())
-                        {
-                            node->setName(dialog->getName().toStdString());
-                        }
-                    }
-                    item->insertChild(node);
-                    ui->tvSceneTree->reset();
+                    node->setName(dialog->getName().toStdString());
                 }
             }
+            ui->tvSceneTree->insertNode(index, node);
         }
     }
 }
