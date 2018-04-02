@@ -157,28 +157,6 @@ int SceneTreeItem::row() const
     return 0;
 }
 
-bool SceneTreeItem::removeChild(osg::Node* node)
-{
-    if(node != nullptr)
-    {
-        osg::ref_ptr<osg::Group> group(dynamic_cast<osg::Group*>(node));
-        if(!!group)
-        {
-            unsigned int index = group->getChildIndex(node);
-            if(index < group->getNumChildren())
-            {
-                group->removeChild(index);
-                SceneTreeItem* item = m_ChildItems[index];
-                m_ChildItems.removeAt(index);
-                delete item;
-
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 void SceneTreeItem::addChild(osg::Node* node)
 {
     osg::ref_ptr<osg::Group> group(m_Node->asGroup());
@@ -187,4 +165,18 @@ void SceneTreeItem::addChild(osg::Node* node)
         group->addChild(node);
         m_ChildItems.append(new SceneTreeItem(node, this));
     }
+}
+
+bool SceneTreeItem::eraseChild(size_t i)
+{
+    osg::ref_ptr<osg::Group> group(m_Node->asGroup());
+    if(!!group && i < group->getNumChildren())
+    {
+        group->removeChild(i);
+        SceneTreeItem* item = m_ChildItems[i];
+        m_ChildItems.removeAt(i);
+        delete item;
+        return true;
+    }
+    return false;
 }

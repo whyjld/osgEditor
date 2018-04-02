@@ -28,8 +28,8 @@ public:
     int row() const;
     SceneTreeItem *parentItem();
 
-    bool removeChild(osg::Node* node);
     void addChild(osg::Node* node);
+    bool eraseChild(size_t i);
 
     osg::Node* getNode() const
     {

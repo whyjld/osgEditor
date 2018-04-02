@@ -206,6 +206,24 @@ bool SceneTreeModel::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node
     return false;
 }
 
+bool SceneTreeModel::eraseItem(const QModelIndex& index, bool withChild)
+{
+    if(index.isValid())
+    {
+        if(!withChild)
+        {
+            SceneTreeItem* i = (SceneTreeItem*)index.internalPointer();
+            SceneTreeItem* p = i->parentItem();
+            int r = i->row();
+            beginRemoveRows(createIndex(p->row(), 0, p), r, r);
+            p->eraseChild(r);
+            endRemoveRows();
+            return true;
+        }
+    }
+    return false;
+}
+
 void SceneTreeModel::ShowAll()
 {
     for(size_t i = 0;i < m_RootItem->childCount();++i)

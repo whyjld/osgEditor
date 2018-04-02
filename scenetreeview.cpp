@@ -27,6 +27,11 @@ bool SceneTreeView::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node>
     return ((SceneTreeModel*)model())->insertNode(index, node);
 }
 
+bool SceneTreeView::eraseItem(const QModelIndex& index, bool withChild)
+{
+    return ((SceneTreeModel*)model())->eraseItem(index, withChild);
+}
+
 void SceneTreeView::onCustomContextMenuRequested(const QPoint& pos)
 {
     m_MenuIndex = indexAt(pos);
