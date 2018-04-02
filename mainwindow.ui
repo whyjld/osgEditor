@@ -106,7 +106,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QTreeView" name="tvSceneTree"/>
+        <widget class="SceneTreeView" name="tvSceneTree"/>
        </item>
       </layout>
      </item>
@@ -142,7 +142,25 @@
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QTreeView" name="tvProperty"/>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_3">
+               <property name="text">
+                <string>Filter: </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="lineEdit"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTreeView" name="tvProperty">
+             <property name="indentation">
+              <number>8</number>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
@@ -531,6 +549,11 @@
    <extends>QWidget</extends>
    <header>qglsleditor.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SceneTreeView</class>
+   <extends>QTreeView</extends>
+   <header>scenetreeview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

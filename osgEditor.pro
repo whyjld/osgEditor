@@ -55,7 +55,10 @@ SOURCES += \
     propertytreepositionattitudetransformitem.cpp \
     propertytreefilenameitem.cpp \
     addattributedialog.cpp \
-    addshaderdialog.cpp
+    addshaderdialog.cpp \
+    scenetreeview.cpp \
+    createnodedialog.cpp \
+    propertytreeswitchitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -94,12 +97,16 @@ HEADERS += \
     propertytreepositionattitudetransformitem.h \
     propertytreefilenameitem.h \
     addattributedialog.h \
-    addshaderdialog.h
+    addshaderdialog.h \
+    scenetreeview.h \
+    createnodedialog.h \
+    propertytreeswitchitem.h
 
 FORMS += \
         mainwindow.ui \
     addattributedialog.ui \
-    addshaderdialog.ui
+    addshaderdialog.ui \
+    createnodedialog.ui
 
 INCLUDEPATH += \
     ../QScintilla/include \

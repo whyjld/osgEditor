@@ -62,6 +62,7 @@ private slots:
 
     void on_pbClose_clicked();
 
+    void on_tvSceneTree_createChild(const QModelIndex &index);
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();

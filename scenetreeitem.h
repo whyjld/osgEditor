@@ -28,6 +28,9 @@ public:
     int row() const;
     SceneTreeItem *parentItem();
 
+    bool removeChild(osg::Node* node);
+    size_t insertChild(osg::Node* node, size_t pos = size_t(-1));
+
     osg::Node* getNode() const
     {
         return m_Node;

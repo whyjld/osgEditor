@@ -12,13 +12,17 @@ PropertyTreeDelegate::PropertyTreeDelegate(QObject *parent)
 void PropertyTreeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     PropertyTreeItem* item = (PropertyTreeItem*)index.internalPointer();
-    if(nullptr == item || !item->paint(painter, option, index))
-    {
-        QStyledItemDelegate::paint(painter, option, index);
-    }
     if(nullptr != item)
     {
-        item->afterPaint(painter, option, index);
+       if(!item->paint(painter, option, index))
+       {
+           QStyledItemDelegate::paint(painter, option, index);
+           item->afterPaint(painter, option, index);
+       }
+    }
+    else
+    {
+        QStyledItemDelegate::paint(painter, option, index);
     }
 }
 

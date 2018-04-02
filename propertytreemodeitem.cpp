@@ -198,6 +198,9 @@ QVariant PropertyTreeModeItem::data(int column, int role) const
 
 bool PropertyTreeModeItem::setData(int column, const QVariant &value, int role)
 {
+    (column);
+    (value);
+    (role);
     return true;
 }
 
@@ -272,6 +275,7 @@ bool PropertyTreeModeItem::setEditorData(QWidget* editor,const QModelIndex& inde
 
 bool PropertyTreeModeItem::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
 {
+    (model);
     PropertyTreeModeItem* mi = (PropertyTreeModeItem*)index.internalPointer();
     if(nullptr != mi)
     {

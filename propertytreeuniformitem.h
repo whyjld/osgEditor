@@ -67,7 +67,7 @@ private:
             }
         };
 
-        return new PropertyTreeVectorItem<float>(this, QString::number(index + 1, 10), getter, setter, Type_t::num_components);
+        return new PropertyTreeVectorItem<Type_t::value_type>(this, QString::number(index + 1, 10), getter, setter, Type_t::num_components);
     }
 
     template<typename Type_t> PropertyTreeItem* CreateVector2Item(unsigned int index)
@@ -95,7 +95,7 @@ private:
             }
         };
 
-        return new PropertyTreeVectorItem<float>(this, QString::number(index + 1, 10), getter, setter, 2);
+        return new PropertyTreeVectorItem<Type_t>(this, QString::number(index + 1, 10), getter, setter, 2);
     }
 
     template<typename Type_t> PropertyTreeItem* CreateVector3Item(unsigned int index)
@@ -123,7 +123,7 @@ private:
             }
         };
 
-        return new PropertyTreeVectorItem<float>(this, QString::number(index + 1, 10), getter, setter, 3);
+        return new PropertyTreeVectorItem<Type_t>(this, QString::number(index + 1, 10), getter, setter, 3);
     }
 
     template<typename Type_t> PropertyTreeItem* CreateVector4Item(unsigned int index)
@@ -151,7 +151,7 @@ private:
             }
         };
 
-        return new PropertyTreeVectorItem<float>(this, QString::number(index + 1, 10), getter, setter, 3);
+        return new PropertyTreeVectorItem<Type_t>(this, QString::number(index + 1, 10), getter, setter, 3);
     }
 
     QVariant m_Name;

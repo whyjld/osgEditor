@@ -2,12 +2,19 @@
 #include "ui_mainwindow.h"
 
 #include "scenetreeitem.h"
-#include "scenetreemodel.h"
 #include "propertytreemodel.h"
 #include "propertytreedelegate.h"
 
+#include "createnodedialog.h"
+
 #include <osgDB/ReadFile>
 #include <osgDB/WriteFile>
+#include <osg/Group>
+#include <osg/MatrixTransform>
+#include <osg/PositionAttitudeTransform>
+#include <osg/Camera>
+#include <osg/Switch>
+#include <osg/Geode>
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -23,7 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->tvSceneTree->setModel(new SceneTreeModel());
     ui->tvProperty->setModel(new PropertyTreeModel(this));
     ui->tvProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvProperty));
 
@@ -137,8 +143,7 @@ void MainWindow::loadSceneFile(const QString& file)
     if(!!newNode)
     {
         ui->owSceneViewer->getViewer()->setSceneData(newNode);
-        ((SceneTreeModel*)ui->tvSceneTree->model())->setSceneNode(newNode);
-        ui->tvSceneTree->reset();
+        ui->tvSceneTree->setSceneNode(newNode);
         m_File = file;
         setWindowTitle(tr("osgEditor ") + m_File);
         addRecent(file);
@@ -158,6 +163,7 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
 {
     if(!path.empty())
     {
+        ui->tvSceneTree->onSelectNode(path);
         osg::ref_ptr<osg::Node> node(path[path.size() - 1]);
         if(m_SelectScribe->getNumChildren() > 0)
         {
@@ -191,7 +197,6 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
         ui->tvProperty->reset();
         ((PropertyTreeModel*)ui->tvProperty->model())->setObject(node.get());
         ui->tvProperty->reset();
-        ui->tvProperty->resizeColumnToContents(0);
     }
 }
 
@@ -296,7 +301,6 @@ void MainWindow::on_owSceneViewer_nodeClicked(QVariant i)
     auto intersection = i.value<osgUtil::LineSegmentIntersector::Intersection>();
     if(intersection.nodePath.size() > 0)
     {
-        ui->tvSceneTree->selectionModel()->setCurrentIndex(((SceneTreeModel*)ui->tvSceneTree->model())->index(intersection.nodePath), QItemSelectionModel::SelectCurrent);
         onSelectNode(intersection.nodePath);
     }
 }
@@ -417,4 +421,58 @@ void MainWindow::on_actionReplace_toggled(bool arg1)
 void MainWindow::on_pbClose_clicked()
 {
     ui->action_Find->setChecked(false);
+}
+
+void MainWindow::on_tvSceneTree_createChild(const QModelIndex &index)
+{
+    if(index.isValid())
+    {
+        SceneTreeItem* item = (SceneTreeItem*)index.internalPointer();
+        if(item->getNode() != nullptr)
+        {
+            osg::Group* group = dynamic_cast<osg::Group*>((osg::Node*)item->getNode());
+            if(nullptr != group)
+            {
+                CreateNodeDialog::NodeType type;
+                std::shared_ptr<CreateNodeDialog> dialog(new CreateNodeDialog(this));
+                if(dialog->exec(type))
+                {
+                    osg::ref_ptr<osg::Node> node;
+                    switch(type)
+                    {
+                    case CreateNodeDialog::ntGroup:
+                        node = new osg::Group();
+                        break;
+                    case CreateNodeDialog::ntMatrixTransform:
+                        node = new osg::MatrixTransform();
+                        break;
+                    case CreateNodeDialog::ntPositionAttitudeTransform:
+                        node = new osg::PositionAttitudeTransform();
+                        break;
+                    case CreateNodeDialog::ntCamera:
+                        node = new osg::Camera();
+                        break;
+                    case CreateNodeDialog::ntSwitch:
+                        node = new osg::Switch();
+                        break;
+                    case CreateNodeDialog::ntGeode:
+                        node = new osg::Geode();
+                        break;
+                    default:
+                        QMessageBox::warning(this, tr("Warning"), tr("Invalid node type"));
+                        break;
+                    }
+                    if(!!node)
+                    {
+                        if(!dialog->getName().isEmpty())
+                        {
+                            node->setName(dialog->getName().toStdString());
+                        }
+                    }
+                    item->insertChild(node);
+                    ui->tvSceneTree->reset();
+                }
+            }
+        }
+    }
 }

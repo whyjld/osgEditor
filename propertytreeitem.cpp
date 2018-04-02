@@ -139,6 +139,7 @@ bool PropertyTreeItem::afterPaint(QPainter *painter, const QStyleOptionViewItem 
 
 bool PropertyTreeItem::sizeHint(QSize& size, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    (size);
     (option);
     (index);
     return false;

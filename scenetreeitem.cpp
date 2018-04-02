@@ -156,3 +156,51 @@ int SceneTreeItem::row() const
     }
     return 0;
 }
+
+bool SceneTreeItem::removeChild(osg::Node* node)
+{
+    if(node != nullptr)
+    {
+        osg::ref_ptr<osg::Group> group(dynamic_cast<osg::Group*>(node));
+        if(!!group)
+        {
+            unsigned int index = group->getChildIndex(node);
+            if(index < group->getNumChildren())
+            {
+                group->removeChild(index);
+                SceneTreeItem* item = m_ChildItems[index];
+                m_ChildItems.removeAt(index);
+                delete item;
+
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+size_t SceneTreeItem::insertChild(osg::Node* node, size_t pos)
+{
+    if(node != nullptr)
+    {
+        osg::ref_ptr<osg::Group> group(m_Node->asGroup());
+        if(!!group)
+        {
+            if(pos < group->getNumChildren())
+            {
+                group->insertChild(pos, node);
+                m_ChildItems.insert(pos, new SceneTreeItem(node, this));
+
+                return pos;
+            }
+            else
+            {
+                group->addChild(node);
+                m_ChildItems.append(new SceneTreeItem(node, this));
+
+                return m_ChildItems.size() - 1;
+            }
+        }
+    }
+    return size_t(-1);
+}
