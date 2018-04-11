@@ -36,7 +36,7 @@ public:
 
     void setSceneNode(const osg::ref_ptr<osg::Node>& node);
 
-    QModelIndex index(const osg::NodePath& path);
+    QModelIndex index(const osg::NodePath& path) const;
 
     bool insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node);
     bool eraseItem(const QModelIndex& index, bool withChild);

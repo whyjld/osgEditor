@@ -152,7 +152,7 @@ void SceneTreeModel::setSceneNode(const osg::ref_ptr<osg::Node>& node)
     m_RootItem = newRoot;
 }
 
-QModelIndex SceneTreeModel::index(const osg::NodePath& path)
+QModelIndex SceneTreeModel::index(const osg::NodePath& path) const
 {
     SceneTreeItem* item = nullptr;
     if(path.size() > 0)
@@ -193,7 +193,15 @@ QModelIndex SceneTreeModel::index(const osg::NodePath& path)
 
 bool SceneTreeModel::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node)
 {
-    SceneTreeItem* item = (SceneTreeItem*)index.internalPointer();
+    SceneTreeItem* item;
+    if(index.isValid())
+    {
+        item = (SceneTreeItem*)index.internalPointer();
+    }
+    else
+    {
+        item = m_RootItem.get();
+    }
     osg::Group* group = item->getNode()->asGroup();
     if(group != nullptr)
     {

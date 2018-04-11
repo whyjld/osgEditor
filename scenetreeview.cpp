@@ -42,7 +42,7 @@ void SceneTreeView::onCustomContextMenuRequested(const QPoint& pos)
     }
     else
     {
-        m_ContextMenu->actions()[0]->setEnabled(false);
+        m_ContextMenu->actions()[0]->setEnabled(true);
     }
     m_ContextMenu->actions()[1]->setEnabled(m_MenuIndex.isValid());
     m_ContextMenu->actions()[2]->setEnabled(m_MenuIndex.isValid());
