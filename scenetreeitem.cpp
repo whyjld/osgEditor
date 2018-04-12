@@ -157,7 +157,7 @@ int SceneTreeItem::row() const
     return 0;
 }
 
-void SceneTreeItem::addChild(osg::Node* node)
+void SceneTreeItem::createChild(osg::Node* node)
 {
     osg::ref_ptr<osg::Group> group(m_Node->asGroup());
     if(!!group)
@@ -165,6 +165,35 @@ void SceneTreeItem::addChild(osg::Node* node)
         group->addChild(node);
         m_ChildItems.append(new SceneTreeItem(node, this));
     }
+}
+
+bool SceneTreeItem::addChild(SceneTreeItem* item)
+{
+    osg::ref_ptr<osg::Group> group(m_Node->asGroup());
+    if(!group)
+    {
+        return false;
+    }
+    if(this == item->parentItem())
+    {
+        return false;
+    }
+    for(SceneTreeItem* i = this;i != nullptr;i = i->parentItem())
+    {
+        if(item == i)
+        {
+            return false;
+        }
+    }
+    SceneTreeItem* opi = item->m_ParentItem;
+    if(nullptr != opi)
+    {
+        opi->m_ChildItems.removeOne(item);
+        opi->m_Node->asGroup()->removeChild(item->m_Node);
+    }
+    group->addChild(item->m_Node);
+    m_ChildItems.append(item);
+    item->m_ParentItem = this;
 }
 
 bool SceneTreeItem::eraseChild(size_t i)

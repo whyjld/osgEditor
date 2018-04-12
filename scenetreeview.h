@@ -16,7 +16,7 @@ public:
     void onSelectNode(const osg::NodePath& path);
 
     bool insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node> node);
-    bool eraseItem(const QModelIndex& index, bool withChild = false);
+    bool eraseItem(const QModelIndex& index, bool withChild = true);
 signals:
     void createChild(const QModelIndex &index);
     void eraseNode(const QModelIndex &index);

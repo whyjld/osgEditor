@@ -106,7 +106,14 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="SceneTreeView" name="tvSceneTree"/>
+        <widget class="SceneTreeView" name="tvSceneTree">
+         <property name="dragEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::InternalMove</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

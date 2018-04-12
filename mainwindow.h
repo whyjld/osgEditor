@@ -65,6 +65,8 @@ private slots:
     void on_tvSceneTree_createChild(const QModelIndex &index);
 
     void on_tvSceneTree_eraseNode(const QModelIndex &index);
+
+    void on_tvSceneTree_eraseNodeButChildren(const QModelIndex &index);
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();

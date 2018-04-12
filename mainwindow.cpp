@@ -467,8 +467,16 @@ void MainWindow::on_tvSceneTree_createChild(const QModelIndex &index)
 
 void MainWindow::on_tvSceneTree_eraseNode(const QModelIndex &index)
 {
-    if(QMessageBox::Yes == QMessageBox::question(this, tr("Warning"), tr("Erase this node?"), QMessageBox::Yes | QMessageBox::Cancel))
+    if(QMessageBox::Yes == QMessageBox::question(this, tr("Warning"), tr("Erase this node and its children?"), QMessageBox::Yes | QMessageBox::Cancel))
     {
         ui->tvSceneTree->eraseItem(index);
+    }
+}
+
+void MainWindow::on_tvSceneTree_eraseNodeButChildren(const QModelIndex &index)
+{
+    if(QMessageBox::Yes == QMessageBox::question(this, tr("Warning"), tr("Erase this node?"), QMessageBox::Yes | QMessageBox::Cancel))
+    {
+        ui->tvSceneTree->eraseItem(index, false);
     }
 }

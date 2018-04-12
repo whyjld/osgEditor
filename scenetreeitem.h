@@ -28,7 +28,8 @@ public:
     int row() const;
     SceneTreeItem *parentItem();
 
-    void addChild(osg::Node* node);
+    void createChild(osg::Node* node);
+    bool addChild(SceneTreeItem* item);
     bool eraseChild(size_t i);
 
     osg::Node* getNode() const

@@ -61,12 +61,9 @@ Qt::ItemFlags SceneTreeModel::flags(const QModelIndex &index) const
         return QAbstractItemModel::flags(index);
     }
 
-    Qt::ItemFlags flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    Qt::ItemFlags flag = Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsDragEnabled;
     switch(index.column())
     {
-    case stcName:
-        flag |= Qt::ItemIsEditable;
-        break;
     case stcType:
         flag |= Qt::ItemIsUserCheckable;
         break;
@@ -207,7 +204,7 @@ bool SceneTreeModel::insertNode(const QModelIndex& index, osg::ref_ptr<osg::Node
     {
         size_t pos = group->getNumChildren();
         beginInsertRows(index, pos, pos);
-        item->addChild(node);
+        item->createChild(node);
         endInsertRows();
         return true;
     }
@@ -218,16 +215,20 @@ bool SceneTreeModel::eraseItem(const QModelIndex& index, bool withChild)
 {
     if(index.isValid())
     {
+        SceneTreeItem* i = (SceneTreeItem*)index.internalPointer();
+        SceneTreeItem* p = i->parentItem();
+        int r = i->row();
+        beginRemoveRows(createIndex(p->row(), 0, p), r, r);
         if(!withChild)
         {
-            SceneTreeItem* i = (SceneTreeItem*)index.internalPointer();
-            SceneTreeItem* p = i->parentItem();
-            int r = i->row();
-            beginRemoveRows(createIndex(p->row(), 0, p), r, r);
-            p->eraseChild(r);
-            endRemoveRows();
-            return true;
+            for(;i->childCount() > 0;)
+            {
+                p->addChild(i->child(0));
+            }
         }
+        p->eraseChild(r);
+        endRemoveRows();
+        return true;
     }
     return false;
 }
