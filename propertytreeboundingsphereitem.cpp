@@ -9,7 +9,7 @@ PropertyTreeBoundingSphereItem::PropertyTreeBoundingSphereItem(PropertyTreeItem 
     , m_Name(name)
 {
     {
-        auto getter = [this]()->QVariant
+        auto getter = [this](const PropertyTreePropertyItem*)->QVariant
         {
             std::stringstream ss;
             ss.flags(std::ios::fixed);
@@ -25,7 +25,7 @@ PropertyTreeBoundingSphereItem::PropertyTreeBoundingSphereItem(PropertyTreeItem 
     }
 
     {
-        auto getter = [this]()->QVariant
+        auto getter = [this](const PropertyTreePropertyItem*)->QVariant
         {
             std::stringstream ss;
             ss.flags(std::ios::fixed);

@@ -36,6 +36,11 @@ public:
 
     void setObject(const osg::ref_ptr<osg::Object>& obj);
 
+    QModelIndex createIndex(int row, int col, void* data) const
+    {
+        return QAbstractItemModel::createIndex(row, col, data);
+    }
+
     void beginResetModel()
     {
         QAbstractItemModel::beginResetModel();
@@ -45,6 +50,33 @@ public:
         QAbstractItemModel::endResetModel();
     }
 
+    void beginInsertRows(const QModelIndex &parent, int first, int last)
+    {
+        QAbstractItemModel::beginInsertRows(parent, first, last);
+    }
+    void endInsertRows()
+    {
+        QAbstractItemModel::endInsertRows();
+    }
+
+    void beginRemoveRows(const QModelIndex &parent, int first, int last)
+    {
+        QAbstractItemModel::beginRemoveRows(parent, first, last);
+    }
+    void endRemoveRows()
+    {
+        QAbstractItemModel::endRemoveRows();
+    }
+
+    bool beginMoveRows(const QModelIndex &sourceParent, int sourceFirst, int sourceLast, const QModelIndex &destinationParent, int destinationRow)
+    {
+        QAbstractItemModel::beginMoveRows(sourceParent, sourceFirst, sourceLast, destinationParent, destinationRow);
+    }
+
+    void endMoveRows()
+    {
+        QAbstractItemModel::endMoveRows();
+    }
 
     QObject* Window;
 private:

@@ -1,7 +1,9 @@
 ﻿#include "propertytreeattributeprogramitem.h"
 #include "propertytreeattributeshaderitem.h"
 #include "propertytreeattributelistitem.h"
+#include "propertytreeattributeprogramshaderdefinesitem.h"
 #include "addshaderdialog.h"
+#include "propertytreemodel.h"
 
 #include <QApplication>
 
@@ -14,26 +16,24 @@ PropertyTreeAttributeProgramItem::PropertyTreeAttributeProgramItem(PropertyTreeI
     , m_Program(program)
     , m_State(QStyle::State_Raised)
 {
+    if(nullptr != dynamic_cast<PropertyTreeAttributeListItem*>(m_ParentItem))
     {
-        PropertyTreeAttributeListItem* parent = dynamic_cast<PropertyTreeAttributeListItem*>(m_ParentItem);
-        if(nullptr != parent)
+        if(nullptr != program)
         {
-            if(nullptr != program)
+            for(size_t i = 0;i < m_Program->getNumShaders();++i)
             {
-                for(size_t i = 0;i < m_Program->getNumShaders();++i)
-                {
-                    m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
-                }
+                m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
             }
-            else
-            {
-                m_Value = tr("Invalid program attribute.");
-            }
+            m_ChildItems.push_back(new PropertyTreeAttributeProgramShaderDefinesItem(this, m_Program));
         }
         else
         {
-            m_Value = tr("Invalid attribute tree data.");
+            m_Value = tr("Invalid program attribute.");
         }
+    }
+    else
+    {
+        m_Value = tr("Invalid attribute tree data.");
     }
 }
 
@@ -132,10 +132,10 @@ void PropertyTreeAttributeProgramItem::buttonClicked()
         false,
         false,
     };
-    size_t sc = m_ChildItems.size();
+    size_t sc = m_Program->getNumShaders();
     for(size_t i = 0;i < sc;++i)
     {
-        switch(dynamic_cast<PropertyTreeAttributeShaderItem*>(m_ChildItems[i])->Shader->getType())
+        switch(m_Program->getShader(i)->getType())
         {
         case osg::Shader::VERTEX:
             shader[0] = true;
@@ -162,33 +162,57 @@ void PropertyTreeAttributeProgramItem::buttonClicked()
     std::shared_ptr<AddShaderDialog> dialog(new AddShaderDialog(nullptr));
     if(QDialog::Accepted == dialog->exec(shader))
     {
-        if(shader[0])
+        for(size_t i = 0;i < sc;++i)
         {
-            m_Program->addShader(new osg::Shader(osg::Shader::VERTEX));
+            switch(m_Program->getShader(i)->getType())
+            {
+            case osg::Shader::VERTEX:
+                shader[0] = false;
+                break;
+            case osg::Shader::TESSCONTROL:
+                shader[1] = false;
+                break;
+            case osg::Shader::TESSEVALUATION:
+                shader[2] = false;
+                break;
+            case osg::Shader::GEOMETRY:
+                shader[3] = false;
+                break;
+            case osg::Shader::FRAGMENT:
+                shader[4] = false;
+                break;
+            case osg::Shader::COMPUTE:
+                shader[5] = false;
+                break;
+            default:
+                break;
+            }
         }
-        if(shader[1])
+
+        osg::Shader::Type shaderTypes[] =
         {
-            m_Program->addShader(new osg::Shader(osg::Shader::TESSCONTROL));
-        }
-        if(shader[2])
+            osg::Shader::VERTEX,
+            osg::Shader::TESSCONTROL,
+            osg::Shader::TESSEVALUATION,
+            osg::Shader::GEOMETRY,
+            osg::Shader::FRAGMENT,
+            osg::Shader::COMPUTE,
+        };
+
+        size_t nsc = 0;
+        for(size_t i = 0;i < AddShaderDialog::ShaderCount;++i)
         {
-            m_Program->addShader(new osg::Shader(osg::Shader::TESSEVALUATION));
+            if(shader[i])
+            {
+                m_Program->addShader(new osg::Shader(shaderTypes[i]));
+                ++nsc;
+            }
         }
-        if(shader[3])
-        {
-            m_Program->addShader(new osg::Shader(osg::Shader::GEOMETRY));
-        }
-        if(shader[4])
-        {
-            m_Program->addShader(new osg::Shader(osg::Shader::FRAGMENT));
-        }
-        if(shader[5])
-        {
-            m_Program->addShader(new osg::Shader(osg::Shader::COMPUTE));
-        }
+        m_Model->beginInsertRows(m_Model->createIndex(m_ParentItem->row(), 0, m_ParentItem), sc, sc + nsc - 1);
         for(size_t i = sc;i < m_Program->getNumShaders();++i)
         {
             m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
         }
+        m_Model->endInsertRows();
     }
 }

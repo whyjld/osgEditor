@@ -9,7 +9,7 @@ PropertyTreeUniformItem::PropertyTreeUniformItem(PropertyTreeItem *parent, const
 {
     {
         QVariant type(osg::Uniform::getTypename(m_Uniform.first->getType()));
-        auto getter = [type]()->QVariant
+        auto getter = [type](const PropertyTreePropertyItem*)->QVariant
         {
             return type;
         };

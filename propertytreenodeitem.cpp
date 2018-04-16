@@ -20,28 +20,28 @@ PropertyTreeNodeItem::PropertyTreeNodeItem(PropertyTreeItem *parent, osg::Node* 
     m_ChildItems.append(new PropertyTreeBaseItem<bool>(this, "CullingActive", CullingActiveGetter, CullingActiveSetter));
 
     //getNumChildrenWithCullingDisabled
-    auto getNumChildrenWithCullingDisabledGetter = [node]()->QVariant
+    auto getNumChildrenWithCullingDisabledGetter = [node](const PropertyTreePropertyItem*)->QVariant
     {
         return QVariant(node->getNumChildrenWithCullingDisabled());
     };
     m_ChildItems.append(new PropertyTreePropertyItem(this, "getNumChildrenWithCullingDisabled", getNumChildrenWithCullingDisabledGetter));
 
     //isCullingActive
-    auto isCullingActiveGetter = [node]()->QVariant
+    auto isCullingActiveGetter = [node](const PropertyTreePropertyItem*)->QVariant
     {
         return QVariant(node->isCullingActive());
     };
     m_ChildItems.append(new PropertyTreePropertyItem(this, "isCullingActive", isCullingActiveGetter));
 
     //getNumChildrenWithOccluderNodes
-    auto getNumChildrenWithOccluderNodesGetter = [node]()->QVariant
+    auto getNumChildrenWithOccluderNodesGetter = [node](const PropertyTreePropertyItem*)->QVariant
     {
         return QVariant(node->getNumChildrenWithOccluderNodes());
     };
     m_ChildItems.append(new PropertyTreePropertyItem(this, "getNumChildrenWithOccluderNodes", getNumChildrenWithOccluderNodesGetter));
 
     //containsOccluderNodes
-    auto containsOccluderNodesGetter = [node]()->QVariant
+    auto containsOccluderNodesGetter = [node](const PropertyTreePropertyItem*)->QVariant
     {
         return QVariant(node->containsOccluderNodes());
     };

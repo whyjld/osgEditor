@@ -58,7 +58,8 @@ SOURCES += \
     addshaderdialog.cpp \
     scenetreeview.cpp \
     createnodedialog.cpp \
-    propertytreeswitchitem.cpp
+    propertytreeswitchitem.cpp \
+    propertytreeattributeprogramshaderdefinesitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -100,7 +101,8 @@ HEADERS += \
     addshaderdialog.h \
     scenetreeview.h \
     createnodedialog.h \
-    propertytreeswitchitem.h
+    propertytreeswitchitem.h \
+    propertytreeattributeprogramshaderdefinesitem.h
 
 FORMS += \
         mainwindow.ui \

@@ -5,12 +5,12 @@
 PropertyTreeObjectItem::PropertyTreeObjectItem(PropertyTreeItem *parentItem, osg::Object* obj)
     : PropertyTreeItem(parentItem)
 {
-    auto setter = [obj](const QVariant& v)
+    auto setter = [obj](PropertyTreePropertyItem*, const QVariant& v)
     {
         obj->setName(v.toString().toStdString());
     };
 
-    auto getter = [obj]()->QVariant
+    auto getter = [obj](const PropertyTreePropertyItem*)->QVariant
     {
         if(obj->getName().length() > 0)
         {

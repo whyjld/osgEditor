@@ -194,6 +194,8 @@ bool SceneTreeItem::addChild(SceneTreeItem* item)
     group->addChild(item->m_Node);
     m_ChildItems.append(item);
     item->m_ParentItem = this;
+
+    return true;
 }
 
 bool SceneTreeItem::eraseChild(size_t i)
