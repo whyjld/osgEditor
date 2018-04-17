@@ -249,9 +249,9 @@ void PropertyTreeAttributeListItem::buttonClicked()
             osg::StateSet::RefAttributePair value(program, osg::StateAttribute::ON);
             AttributeList[key] = value;
 
-            m_Model->beginResetModel();
+            m_Model->beginInsertRows(m_Model->createIndex(row(), 0, this), m_ChildItems.size(), m_ChildItems.size());
             m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, program));
-            m_Model->endResetModel();
+            m_Model->endInsertRows();
         }
         else
         {

@@ -11,17 +11,12 @@
 class PropertyTreePropertyItem : public PropertyTreeItem
 {
 public:
-    enum Button
-    {
-        bNone = 0x00,
-        bDelete = 0x01,
-    };
-
     typedef std::function<void(PropertyTreePropertyItem*, const QVariant&)> Setter_t;
     typedef std::function<QVariant(const PropertyTreePropertyItem*)> Getter_t;
-    typedef std::function<void(PropertyTreePropertyItem*, Button)> OnClick_t;
+    typedef std::function<void(PropertyTreePropertyItem*, size_t)> OnClick_t;
+    typedef std::vector<QString> Buttons_t;
 
-    PropertyTreePropertyItem(PropertyTreeItem *parentItem, const QString& name, const Setter_t& setter, const Getter_t& getter, size_t buttons = bNone, const OnClick_t& onClick = OnClick_t())
+    PropertyTreePropertyItem(PropertyTreeItem *parentItem, const QString& name, const Setter_t& setter, const Getter_t& getter, const Buttons_t& buttons = Buttons_t(), const OnClick_t& onClick = OnClick_t())
         : PropertyTreeItem(parentItem)
         , m_Name(name)
         , m_Setter(setter)
@@ -32,7 +27,7 @@ public:
         Initialize();
     }
 
-    PropertyTreePropertyItem(PropertyTreeItem *parentItem, const QString& name, const Getter_t& getter, size_t buttons = bNone, const OnClick_t& onClick = OnClick_t())
+    PropertyTreePropertyItem(PropertyTreeItem *parentItem, const QString& name, const Getter_t& getter, const Buttons_t& buttons = Buttons_t(), const OnClick_t& onClick = OnClick_t())
         : PropertyTreeItem(parentItem)
         , m_Name(name)
         , m_Getter(getter)
@@ -85,10 +80,9 @@ public:
         {
             size_t index = 0;
             QRect rect = option.rect;
-            if(0 != (m_Buttons & bDelete))
+            for(size_t i = 0;i < m_Buttons.size();++i)
             {
-                const QString btnText = tr("delete");
-                QRect btnRect = drawButton(painter, btnText, rect, m_ButtonStates[index]);
+                QRect btnRect = drawButton(painter, m_Buttons[i], rect, m_ButtonStates[index]);
                 m_ButtonRects[index] = btnRect;
                 rect.setRight(btnRect.left());
                 ++index;
@@ -108,7 +102,7 @@ public:
         {
             if(Qt::LeftButton == mouseEvent->button())
             {
-                for(size_t i = 0;i < m_ButtonNames.size();++i)
+                for(size_t i = 0;i < m_Buttons.size();++i)
                 {
                     if(m_ButtonRects[i].contains(mouseEvent->pos()))
                     {
@@ -121,7 +115,7 @@ public:
                             m_ButtonStates[i] = QStyle::State_Raised;
                             if(!!m_OnClick)
                             {
-                                m_OnClick(this, m_ButtonNames[i]);
+                                m_OnClick(this, i);
                             }
                             break;
                         default:
@@ -138,15 +132,8 @@ public:
 private:
     void Initialize()
     {
-        if(0 != (bDelete & m_Buttons))
-        {
-            m_ButtonNames.push_back(bDelete);
-        }
-        if(m_ButtonNames.size() > 0)
-        {
-            m_ButtonStates.resize(m_ButtonNames.size(), QStyle::State_Raised);
-            m_ButtonRects.resize(m_ButtonNames.size());
-        }
+        m_ButtonStates.resize(m_Buttons.size(), QStyle::State_Raised);
+        m_ButtonRects.resize(m_Buttons.size());
     }
 
     QRect drawButton(QPainter* painter, const QString& text, QRect rect, QStyle::State state) const
@@ -175,9 +162,8 @@ private:
     Setter_t m_Setter;
     Getter_t m_Getter;
 
-    size_t m_Buttons;
     OnClick_t m_OnClick;
-    std::vector<Button> m_ButtonNames;
+    Buttons_t m_Buttons;
     std::vector<QStyle::State> m_ButtonStates;
     mutable std::vector<QRect> m_ButtonRects;
 };

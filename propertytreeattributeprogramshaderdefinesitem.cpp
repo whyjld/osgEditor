@@ -113,16 +113,19 @@ void PropertyTreeAttributeProgramShaderDefinesItem::buttonClicked()
     if(!define.isEmpty() && m_ShaderDefines.find(define.toStdString()) == m_ShaderDefines.end())
     {
         m_Model->beginInsertRows(m_Model->createIndex(this->row(), 0, this), m_ChildItems.size(), m_ChildItems.size());
+
+        std::vector<QString> buttons;
+        buttons.push_back(tr("delete"));
         m_ChildItems.push_back(new PropertyTreePropertyItem(this,
                                                             "",
                                                             [define](const PropertyTreePropertyItem*)->QVariant
                                                             {
                                                                 return QVariant(define);
                                                             },
-                                                            PropertyTreePropertyItem::bDelete,
-                                                            [define, this](PropertyTreePropertyItem* sender, PropertyTreePropertyItem::Button button)
+                                                            buttons,
+                                                            [define, this](PropertyTreePropertyItem* sender, size_t button)
                                                             {
-                                                                if(PropertyTreePropertyItem::bDelete == button)
+                                                                if(0 == button)
                                                                 {
                                                                     if(QMessageBox::Yes == QMessageBox::question(nullptr, tr("Warning"), tr("Delete this shader define?"), QMessageBox::Yes | QMessageBox::Cancel))
                                                                     {

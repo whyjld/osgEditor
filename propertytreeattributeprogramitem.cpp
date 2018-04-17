@@ -26,9 +26,19 @@ PropertyTreeAttributeProgramItem::PropertyTreeAttributeProgramItem(PropertyTreeI
     {
         if(nullptr != program)
         {
+            std::vector<QString> buttons;
+            buttons.push_back(tr("link"));
             m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Info log", [this](const PropertyTreePropertyItem*)->QVariant
             {
                 return QVariant(this->m_InfoLog);
+            },
+            buttons,
+            [this](PropertyTreePropertyItem*, size_t button)
+            {
+                if(0 == button)
+                {
+                    checkProgramStatus();
+                }
             }));
             m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Attribute count", [this](const PropertyTreePropertyItem*)->QVariant
             {

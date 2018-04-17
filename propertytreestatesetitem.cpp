@@ -117,18 +117,23 @@ void PropertyTreeStateSetItem::buttonClicked()
 bool PropertyTreeStateSetItem::CreateStateSet()
 {
     m_StateSet = m_Creator();
-    return !!m_StateSet && CreateStateSetProperty();
+    if(!!m_StateSet)
+    {
+        m_Model->beginInsertRows(m_Model->createIndex(this->row(), 0, this), 0, 2);
+        CreateStateSetProperty();
+        m_Model->endInsertRows();
+        return true;
+    }
+    return false;
 }
 
 bool PropertyTreeStateSetItem::CreateStateSetProperty()
 {
     if(!!m_StateSet)
     {
-        m_Model->beginResetModel();
         m_ChildItems.push_back(new PropertyTreeModeListItem(this, m_StateSet->getModeList()));
         m_ChildItems.push_back(new PropertyTreeAttributeListItem(this, m_StateSet->getAttributeList()));
         m_ChildItems.push_back(new PropertyTreeUniformListItem(this, m_StateSet->getUniformList()));
-        m_Model->endResetModel();
 
         return true;
     }
