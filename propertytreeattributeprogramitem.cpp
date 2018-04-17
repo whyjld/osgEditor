@@ -2,8 +2,11 @@
 #include "propertytreeattributeshaderitem.h"
 #include "propertytreeattributelistitem.h"
 #include "propertytreeattributeprogramshaderdefinesitem.h"
+#include "propertytreepropertyitem.h"
 #include "addshaderdialog.h"
 #include "propertytreemodel.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 #include <QApplication>
 
@@ -14,17 +17,38 @@ const QString g_BtnText(QObject::tr("create"));
 PropertyTreeAttributeProgramItem::PropertyTreeAttributeProgramItem(PropertyTreeItem *parent, osg::Program* program)
     : PropertyTreeItem(parent)
     , m_Program(program)
+    , m_UniformCount(0)
+    , m_AttributeCount(0)
+    , m_UniformBlockCount(0)
     , m_State(QStyle::State_Raised)
 {
     if(nullptr != dynamic_cast<PropertyTreeAttributeListItem*>(m_ParentItem))
     {
         if(nullptr != program)
         {
+            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Info log", [this](const PropertyTreePropertyItem*)->QVariant
+            {
+                return QVariant(this->m_InfoLog);
+            }));
+            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Attribute count", [this](const PropertyTreePropertyItem*)->QVariant
+            {
+                return QVariant(this->m_AttributeCount);
+            }));
+            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform count", [this](const PropertyTreePropertyItem*)->QVariant
+            {
+                return QVariant(this->m_UniformCount);
+            }));
+            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform block count", [this](const PropertyTreePropertyItem*)->QVariant
+            {
+                return QVariant(this->m_UniformBlockCount);
+            }));
             for(size_t i = 0;i < m_Program->getNumShaders();++i)
             {
                 m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
             }
             m_ChildItems.push_back(new PropertyTreeAttributeProgramShaderDefinesItem(this, m_Program));
+
+            checkProgramStatus();
         }
         else
         {
@@ -121,6 +145,39 @@ bool PropertyTreeAttributeProgramItem::editorEvent(QEvent *event, QAbstractItemM
     return false;
 }
 
+void PropertyTreeAttributeProgramItem::checkProgramStatus()
+{
+    osgViewer::Viewer::Contexts contexts;
+    osgViewer::Viewer* viewer = dynamic_cast<MainWindow*>(m_Model->Window)->getUI()->owSceneViewer->getViewer();
+    viewer->getContexts(contexts);
+    if(contexts.size() > 0)
+    {
+        osg::State* state = contexts[0]->getState();
+        osg::Program::PerContextProgram* pcp = m_Program->getPCP(*state);
+
+        if(nullptr != pcp)
+        {
+            if(pcp->needsLink())
+            {
+                pcp->linkProgram(*state);
+            }
+            std::string infoLog;
+            bool ret = pcp->getInfoLog(infoLog);
+            if(ret)
+            {
+                m_InfoLog = infoLog.c_str();
+            }
+            else
+            {
+                m_InfoLog.clear();
+            }
+            m_UniformCount = pcp->getActiveUniforms().size();
+            m_AttributeCount = pcp->getActiveAttribs().size();
+            m_UniformBlockCount = pcp->getUniformBlocks().size();
+        }
+    }
+}
+
 void PropertyTreeAttributeProgramItem::buttonClicked()
 {
     bool shader[AddShaderDialog::ShaderCount] =
@@ -214,5 +271,6 @@ void PropertyTreeAttributeProgramItem::buttonClicked()
             m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
         }
         m_Model->endInsertRows();
+        checkProgramStatus();
     }
 }

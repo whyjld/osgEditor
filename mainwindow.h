@@ -23,6 +23,11 @@ public:
     ~MainWindow();
 
     void editShader(osg::Shader* shader);
+
+    Ui::MainWindow *getUI() const
+    {
+        return ui;
+    }
 private slots:
     void openRecentFile();
 
@@ -67,6 +72,7 @@ private slots:
     void on_tvSceneTree_eraseNode(const QModelIndex &index);
 
     void on_tvSceneTree_eraseNodeButChildren(const QModelIndex &index);
+
 private:
     void addRecent(const QString& file);
     void initializeRecentItem();

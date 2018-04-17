@@ -20,10 +20,16 @@ public:
     virtual bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
 
 private:
+    void checkProgramStatus();
     void buttonClicked();
 
     osg::ref_ptr<osg::Program> m_Program;
     QVariant m_Value;
+
+    QString m_InfoLog;
+    size_t m_UniformCount;
+    size_t m_AttributeCount;
+    size_t m_UniformBlockCount;
 
     QStyle::State m_State;
     mutable QRect m_ButtonRect;
