@@ -9,7 +9,7 @@
 class PropertyTreeAttributeProgramItem : public PropertyTreeItem
 {
 public:
-    PropertyTreeAttributeProgramItem(PropertyTreeItem *parent, osg::Program* program);
+    PropertyTreeAttributeProgramItem(PropertyTreeModel* model, osg::Program* program);
     virtual ~PropertyTreeAttributeProgramItem();
 
     virtual Qt::ItemFlags flags(int column) const;

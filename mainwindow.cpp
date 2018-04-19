@@ -2,8 +2,10 @@
 #include "ui_mainwindow.h"
 
 #include "scenetreeitem.h"
+#include "propertytreeitem.h"
 #include "propertytreemodel.h"
 #include "propertytreedelegate.h"
+#include "managerlistitem.h"
 
 #include "createnodedialog.h"
 
@@ -15,11 +17,55 @@
 #include <osg/Camera>
 #include <osg/Switch>
 #include <osg/Geode>
+#include <osg/Node>
+#include <osg/Program>
+#include <osg/Texture>
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStandardItemModel>
 
 #include <memory>
+#include <set>
+
+class ResourceVisitor : public osg::NodeVisitor
+{
+public:
+    ResourceVisitor(std::set<osg::Program*>& programs, std::set<osg::Texture*>& textures)
+        : osg::NodeVisitor(TRAVERSE_ALL_CHILDREN)
+        , m_Programs(programs)
+        , m_Textures(textures)
+    {
+
+    }
+
+    virtual void apply(osg::Node& node)
+    {
+        osg::StateSet* ss = node.getStateSet();
+        if(nullptr != ss)
+        {
+            osg::Program* program = dynamic_cast<osg::Program*>(ss->getAttribute(osg::StateAttribute::PROGRAM));
+            if(nullptr != program)
+            {
+                m_Programs.insert(program);
+            }
+
+            size_t tc = ss->getNumTextureAttributeLists();
+            for(size_t i = 0;i < tc;++i)
+            {
+                osg::Texture* texture = dynamic_cast<osg::Texture*>(ss->getTextureAttribute(i, osg::StateAttribute::TEXTURE));
+                if(nullptr != texture)
+                {
+                    m_Textures.insert(texture);
+                }
+            }
+        }
+        traverse(node);
+    }
+private:
+    std::set<osg::Program*>& m_Programs;
+    std::set<osg::Texture*>& m_Textures;
+};
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,9 +79,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tvProperty->setModel(new PropertyTreeModel(this));
     ui->tvProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvProperty));
 
-    m_Manipulator->setAllowThrow(false);
-    ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
-
     ui->wSearch->setVisible(false);
     ui->wReplace->setVisible(false);
 
@@ -44,12 +87,36 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pbReplace, SIGNAL(clicked()), ui->qsShaderSource, SLOT(replace()));
     connect(ui->pbReplaceAll, SIGNAL(clicked()), ui->qsShaderSource, SLOT(replaceAll()));
 
+    ui->tvProgramProperty->setModel(new PropertyTreeModel(this));
+    ui->tvProgramProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvProgramProperty));
+    ui->lvProgramManager->setModel(new QStandardItemModel(ui->lvProgramManager));
+
+    ui->tvTextureProperty->setModel(new PropertyTreeModel(this));
+    ui->tvTextureProperty->setItemDelegate(new PropertyTreeDelegate(ui->tvTextureProperty));
+    ui->lvTextureManager->setModel(new QStandardItemModel(ui->lvTextureManager));
+
+    ui->menu_Window->addAction(ui->dwSceneTree->toggleViewAction());
+    ui->menu_Window->addAction(ui->dwNodeProperty->toggleViewAction());
+    ui->menu_Window->addAction(ui->dwProgramProperty->toggleViewAction());
+    ui->menu_Window->addAction(ui->dwProgramManager->toggleViewAction());
+    ui->menu_Window->addAction(ui->dwTextureManager->toggleViewAction());
+
+    tabifyDockWidget(ui->dwTextureManager, ui->dwProgramManager);
+    ui->dwTextureManager->raise();
+
+    tabifyDockWidget(ui->dwNodeProperty, ui->dwTextureProperty);
+    tabifyDockWidget(ui->dwNodeProperty, ui->dwProgramProperty);
+    ui->dwNodeProperty->raise();
+
     m_SelectScribe->setEnabled(true);
     m_SelectScribe->setWireframeColor(osg::Vec4(0.0, 0.0, 1.0, 1.0));
 
     initializeRecentItem();
     QStringList files = m_Settings.value("recentFileList").toStringList();
     updateRecentItem(files);
+
+    m_Manipulator->setAllowThrow(false);
+    ui->owSceneViewer->getViewer()->setCameraManipulator(m_Manipulator);
 }
 
 MainWindow::~MainWindow()
@@ -144,6 +211,34 @@ void MainWindow::loadSceneFile(const QString& file)
     {
         ui->owSceneViewer->getViewer()->setSceneData(newNode);
         ui->tvSceneTree->setSceneNode(newNode);
+
+        std::set<osg::Program*> programs;
+        std::set<osg::Texture*> textures;
+
+        newNode->accept(ResourceVisitor(programs, textures));
+
+        if(programs.size() > 0)
+        {
+            QIcon icon("./glsl.png");
+            QStandardItemModel* pm = dynamic_cast<QStandardItemModel*>(ui->lvProgramManager->model());
+            for(auto i = programs.begin();i != programs.end();++i)
+            {
+                const std::string& name = (*i)->getName();
+                pm->insertRow(pm->rowCount(), new ManagerListItem<osg::Program>(icon, QString(name.length() > 0 ? name.c_str() : tr("No name")), *i));
+            }
+        }
+
+        if(textures.size() > 0)
+        {
+            QIcon icon("./glsl.png");
+            QStandardItemModel* pm = dynamic_cast<QStandardItemModel*>(ui->lvTextureManager->model());
+            for(auto i = textures.begin();i != textures.end();++i)
+            {
+                const std::string& name = (*i)->getName();
+                pm->insertRow(pm->rowCount(), new ManagerListItem<osg::Texture>(icon, QString(name.length() > 0 ? name.c_str() : tr("No name")), *i));
+            }
+        }
+
         m_File = file;
         setWindowTitle(tr("osgEditor ") + m_File);
         addRecent(file);
@@ -193,10 +288,11 @@ void MainWindow::onSelectNode(const osg::NodePath& path)
             }
         }
         QString name = node->getName().length() > 0 ? node->getName().c_str() : tr("No Name");
-        ui->lblNode->setText(name + QString(" : ") + QString(node->className()));
-        ui->tvProperty->reset();
-        ((PropertyTreeModel*)ui->tvProperty->model())->setObject(node.get());
-        ui->tvProperty->reset();
+        ui->lblNode->setText(name + QString(" : ") + QString(node->className()));\
+
+        PropertyTreeModel* pm = (PropertyTreeModel*)ui->tvProperty->model();
+        std::shared_ptr<PropertyTreeItem> pr(new PropertyTreeItem(pm, node));
+        pm->setRoot(pr);
     }
 }
 
@@ -336,55 +432,7 @@ void MainWindow::on_action_Save_triggered()
     osgDB::writeNodeFile(*ui->owSceneViewer->getViewer()->getSceneData(), m_File.toStdString());
 }
 
-void MainWindow::on_dwSceneTree_visibilityChanged(bool visible)
-{
-    if(ui->actionScene_Tree->isChecked() != visible)
-    {
-        ui->actionScene_Tree->setChecked(visible);
-    }
-}
-
-void MainWindow::on_dwProperty_visibilityChanged(bool visible)
-{
-    if(ui->action_Property->isChecked() != visible)
-    {
-        ui->action_Property->setChecked(visible);
-    }
-}
-
-void MainWindow::on_dwSource_visibilityChanged(bool visible)
-{
-    if(ui->actionShader_Source->isChecked() != visible)
-    {
-        ui->actionShader_Source->setChecked(visible);
-    }
-}
-
-void MainWindow::on_actionScene_Tree_toggled(bool arg1)
-{
-    if(ui->dwSceneTree->isVisible() != arg1)
-    {
-        ui->dwSceneTree->setVisible(arg1);
-    }
-}
-
-void MainWindow::on_action_Property_toggled(bool arg1)
-{
-    if(ui->dwProperty->isVisible() != arg1)
-    {
-        ui->dwProperty->setVisible(arg1);
-    }
-}
-
-void MainWindow::on_actionShader_Source_toggled(bool arg1)
-{
-    if(ui->dwSource->isVisible() != arg1)
-    {
-        ui->dwSource->setVisible(arg1);
-    }
-}
-
-void MainWindow::on_pbSSApply_clicked()
+void MainWindow::on_pbSSSave_clicked()
 {
     ui->qsShaderSource->apply();
 }
@@ -479,4 +527,14 @@ void MainWindow::on_tvSceneTree_eraseNodeButChildren(const QModelIndex &index)
     {
         ui->tvSceneTree->eraseItem(index, false);
     }
+}
+
+void MainWindow::on_cbProgramManager_currentIndexChanged(int index)
+{
+    ui->lvProgramManager->setViewMode((0 == index) ? QListView::ListMode : QListView::IconMode);
+}
+
+void MainWindow::on_cbTextureManager_currentIndexChanged(int index)
+{
+    ui->lvTextureManager->setViewMode((0 == index) ? QListView::ListMode : QListView::IconMode);
 }

@@ -3,13 +3,13 @@
 
 #include "propertytreeitem.h"
 
-#include <osg/ref_ptr>
-#include <osg/Node>
+#include <osg/StateSet>
+#include <osg/Program>
 
 class PropertyTreeAttributeListItem : public PropertyTreeItem
 {
 public:
-    PropertyTreeAttributeListItem(PropertyTreeItem *parent, osg::StateSet::AttributeList& attributeList);
+    PropertyTreeAttributeListItem(PropertyTreeItem *parent, const QString& name, osg::StateSet::AttributeList& attributeList);
     virtual ~PropertyTreeAttributeListItem();
 
     virtual Qt::ItemFlags flags(int column) const;
@@ -22,6 +22,9 @@ public:
     osg::StateSet::AttributeList& AttributeList;
 private:
     void buttonClicked();
+    void addProgramItem(osg::Program* program);
+
+    QVariant m_Name;
 
     QStyle::State m_State;
     mutable QRect m_ButtonRect;

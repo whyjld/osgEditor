@@ -1,8 +1,11 @@
 ﻿#include "propertytreeattributelistitem.h"
 #include "propertytreeattributeunknownitem.h"
 #include "propertytreeattributeprogramitem.h"
+#include "propertytreepropertyitem.h"
 #include "addattributedialog.h"
 #include "propertytreemodel.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 #include <QApplication>
 #include <QMessageBox>
@@ -11,9 +14,10 @@
 
 const QString g_BtnText = QObject::tr("add");
 
-PropertyTreeAttributeListItem::PropertyTreeAttributeListItem(PropertyTreeItem *parent, osg::StateSet::AttributeList& attributeList)
+PropertyTreeAttributeListItem::PropertyTreeAttributeListItem(PropertyTreeItem *parent, const QString& name, osg::StateSet::AttributeList& attributeList)
     : PropertyTreeItem(parent)
     , AttributeList(attributeList)
+    , m_Name(name)
     , m_State(QStyle::State_Raised)
 {
     for(auto i = AttributeList.begin();i != AttributeList.end();++i)
@@ -93,7 +97,7 @@ PropertyTreeAttributeListItem::PropertyTreeAttributeListItem(PropertyTreeItem *p
 //        case POINTSPRITE:
 //            break;
         case osg::StateAttribute::PROGRAM:
-            m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, dynamic_cast<osg::Program*>(i->second.first.get())));
+            addProgramItem(dynamic_cast<osg::Program*>(i->second.first.get()));
             break;
 //        case CLAMPCOLOR:
 //            break;
@@ -167,7 +171,7 @@ QVariant PropertyTreeAttributeListItem::data(int column, int role) const
         switch(column)
         {
         case ptcProperty:
-            return QVariant("AttributeList");
+            return m_Name;
         case ptcValue:
             return QVariant("...");
         }
@@ -241,21 +245,53 @@ void PropertyTreeAttributeListItem::buttonClicked()
     std::shared_ptr<AddAttributeDialog> dialog(new AddAttributeDialog(AttributeList));
     if(QDialog::Accepted == dialog->exec(type))
     {
-        if(osg::StateAttribute::PROGRAM == type)
+        osg::StateAttribute::TypeMemberPair key(type, 0);
+        switch(type)
         {
-            osg::ref_ptr<osg::Program> program(new osg::Program());
+        case osg::StateAttribute::PROGRAM:
+            if(true)
+            {
+                osg::ref_ptr<osg::Program> program(new osg::Program());
 
-            osg::StateAttribute::TypeMemberPair key(osg::StateAttribute::PROGRAM, 0);
-            osg::StateSet::RefAttributePair value(program, osg::StateAttribute::ON);
-            AttributeList[key] = value;
+                osg::StateSet::RefAttributePair value(program, osg::StateAttribute::ON);
+                AttributeList[key] = value;
 
-            m_Model->beginInsertRows(m_Model->createIndex(row(), 0, this), m_ChildItems.size(), m_ChildItems.size());
-            m_ChildItems.push_back(new PropertyTreeAttributeProgramItem(this, program));
-            m_Model->endInsertRows();
-        }
-        else
-        {
+                m_Model->beginInsertRows(m_Model->createIndex(row(), 0, this), m_ChildItems.size(), m_ChildItems.size());
+                addProgramItem(program);
+                m_Model->endInsertRows();
+            }
+            break;
+        default:
             QMessageBox::warning(QApplication::activeWindow(), tr("Warning"), tr("Unknown attribute."), QMessageBox::Ok);
+            break;
         }
+    }
+}
+
+void PropertyTreeAttributeListItem::addProgramItem(osg::Program* program)
+{
+    if(program != nullptr)
+    {
+        std::vector<QString> buttons;
+        buttons.push_back(tr("edit"));
+        m_ChildItems.push_back(new PropertyTreePropertyItem(this,
+                                                            "osgProgram",
+                                                            [program](const PropertyTreePropertyItem*)->QVariant{
+                                                                return QVariant((program->getName().length() > 0) ? program->getName().c_str() : tr("No name"));
+                                                            },
+                                                            buttons,
+                                                            [program, this](PropertyTreePropertyItem*, size_t){
+                                                                Ui::MainWindow* mw = ((MainWindow*)m_Model->Window)->getUI();
+                                                                PropertyTreeModel* pm = dynamic_cast<PropertyTreeModel*>(mw->tvProgramProperty->model());
+                                                                std::shared_ptr<PropertyTreeItem> root(new PropertyTreeAttributeProgramItem(pm, program));
+                                                                pm->setRoot(root);
+                                                                if(!mw->dwProgramProperty->isVisible())
+                                                                {
+                                                                    mw->dwProgramProperty->setVisible(true);
+                                                                }
+                                                                mw->twProgramProperty->setCurrentIndex(0);
+                                                                mw->dwProgramProperty->raise();
+                                                            }
+                                                            ));
     }
 }

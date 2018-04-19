@@ -23,21 +23,21 @@ PropertyTreeItem::PropertyTreeItem(PropertyTreeModel* model, osg::Object* object
     if(object != nullptr)
     {
         m_ChildItems.append(new PropertyTreeObjectItem(this, object));
-    }
-    osg::Node* node = dynamic_cast<osg::Node*>(object);
-    if(node != nullptr)
-    {
-        m_ChildItems.append(new PropertyTreeNodeItem(this, node));
-    }
-    osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(object);
-    if(mt != nullptr)
-    {
-        m_ChildItems.append(new PropertyTreeMatrixTransformItem(this, mt));
-    }
-    osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*>(object);
-    if(pat != nullptr)
-    {
-        m_ChildItems.append(new PropertyTreePositionAttitudeTransformItem(this, pat));
+        osg::Node* node = dynamic_cast<osg::Node*>(object);
+        if(node != nullptr)
+        {
+            m_ChildItems.append(new PropertyTreeNodeItem(this, node));
+        }
+        osg::MatrixTransform* mt = dynamic_cast<osg::MatrixTransform*>(object);
+        if(mt != nullptr)
+        {
+            m_ChildItems.append(new PropertyTreeMatrixTransformItem(this, mt));
+        }
+        osg::PositionAttitudeTransform* pat = dynamic_cast<osg::PositionAttitudeTransform*>(object);
+        if(pat != nullptr)
+        {
+            m_ChildItems.append(new PropertyTreePositionAttitudeTransformItem(this, pat));
+        }
     }
 }
 
@@ -58,7 +58,7 @@ int PropertyTreeItem::childCount() const
 
 int PropertyTreeItem::columnCount() const
 {
-    return stcCount;
+    return ptcCount;
 }
 
 int PropertyTreeItem::row() const

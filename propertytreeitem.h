@@ -11,7 +11,7 @@ enum PropertyTreeColumn
 {
     ptcProperty,
     ptcValue,
-    stcCount,
+    ptcCount,
 };
 
 class PropertyTreeModel;
@@ -20,7 +20,7 @@ class PropertyTreeItem : public QObject
 {
     Q_OBJECT
 public:
-    PropertyTreeItem(PropertyTreeItem *parent);
+    explicit PropertyTreeItem(PropertyTreeItem *parent);
     PropertyTreeItem(PropertyTreeModel* model, osg::Object* object);
     virtual ~PropertyTreeItem();
 

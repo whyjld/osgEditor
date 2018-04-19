@@ -47,19 +47,7 @@ private slots:
 
     void on_action_Save_triggered();
 
-    void on_dwSceneTree_visibilityChanged(bool visible);
-
-    void on_dwProperty_visibilityChanged(bool visible);
-
-    void on_dwSource_visibilityChanged(bool visible);
-
-    void on_actionScene_Tree_toggled(bool arg1);
-
-    void on_action_Property_toggled(bool arg1);
-
-    void on_actionShader_Source_toggled(bool arg1);
-
-    void on_pbSSApply_clicked();
+    void on_pbSSSave_clicked();
 
     void on_action_Find_toggled(bool arg1);
 
@@ -72,6 +60,9 @@ private slots:
     void on_tvSceneTree_eraseNode(const QModelIndex &index);
 
     void on_tvSceneTree_eraseNodeButChildren(const QModelIndex &index);
+    void on_cbProgramManager_currentIndexChanged(int index);
+
+    void on_cbTextureManager_currentIndexChanged(int index);
 
 private:
     void addRecent(const QString& file);

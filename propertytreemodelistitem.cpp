@@ -3,9 +3,10 @@
 
 #include <QPushButton>
 
-PropertyTreeModeListItem::PropertyTreeModeListItem(PropertyTreeItem *parent, osg::StateSet::ModeList& modeList)
+PropertyTreeModeListItem::PropertyTreeModeListItem(PropertyTreeItem *parent, const QString& name, osg::StateSet::ModeList& modeList)
     : PropertyTreeItem(parent)
     , ModeList(modeList)
+    , m_Name(name)
 {
     for(auto i = ModeList.begin();i != ModeList.end();++i)
     {
@@ -29,7 +30,7 @@ QVariant PropertyTreeModeListItem::data(int column, int role) const
         switch(column)
         {
         case ptcProperty:
-            return QVariant("ModeList");
+            return m_Name;
         case ptcValue:
             return QVariant("...");
         }

@@ -5,7 +5,6 @@
 
 const osg::StateAttribute::Type c_Types[] =
 {
-    osg::StateAttribute::TEXTURE,
     osg::StateAttribute::POLYGONMODE,
     osg::StateAttribute::POLYGONOFFSET,
     osg::StateAttribute::MATERIAL,
@@ -67,7 +66,6 @@ const osg::StateAttribute::Type c_Types[] =
 
 const char* c_Typenames[] =
 {
-    "TEXTURE",
     "POLYGONMODE",
     "POLYGONOFFSET",
     "MATERIAL",
@@ -129,7 +127,6 @@ const char* c_Typenames[] =
 
 const size_t c_TypeElements[] =
 {
-    0,
     0,
     0,
     0,

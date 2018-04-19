@@ -34,7 +34,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
-    void setObject(const osg::ref_ptr<osg::Object>& obj);
+    void setRoot(const std::shared_ptr<PropertyTreeItem>& root);
 
     QModelIndex createIndex(int row, int col, void* data) const
     {

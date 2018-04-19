@@ -52,7 +52,7 @@
        <item>
         <widget class="QCheckBox" name="cbGeometry">
          <property name="text">
-          <string>Geometry</string>
+          <string>Geometry Shader</string>
          </property>
         </widget>
        </item>

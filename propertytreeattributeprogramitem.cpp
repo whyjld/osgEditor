@@ -14,60 +14,53 @@
 
 const QString g_BtnText(QObject::tr("create"));
 
-PropertyTreeAttributeProgramItem::PropertyTreeAttributeProgramItem(PropertyTreeItem *parent, osg::Program* program)
-    : PropertyTreeItem(parent)
+PropertyTreeAttributeProgramItem::PropertyTreeAttributeProgramItem(PropertyTreeModel* model, osg::Program* program)
+    : PropertyTreeItem(model, nullptr)
     , m_Program(program)
     , m_UniformCount(0)
     , m_AttributeCount(0)
     , m_UniformBlockCount(0)
     , m_State(QStyle::State_Raised)
 {
-    if(nullptr != dynamic_cast<PropertyTreeAttributeListItem*>(m_ParentItem))
+    if(nullptr != program)
     {
-        if(nullptr != program)
+        std::vector<QString> buttons;
+        buttons.push_back(tr("link"));
+        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Info log", [this](const PropertyTreePropertyItem*)->QVariant
         {
-            std::vector<QString> buttons;
-            buttons.push_back(tr("link"));
-            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Info log", [this](const PropertyTreePropertyItem*)->QVariant
+            return QVariant(this->m_InfoLog);
+        },
+        buttons,
+        [this](PropertyTreePropertyItem*, size_t button)
+        {
+            if(0 == button)
             {
-                return QVariant(this->m_InfoLog);
-            },
-            buttons,
-            [this](PropertyTreePropertyItem*, size_t button)
-            {
-                if(0 == button)
-                {
-                    checkProgramStatus();
-                }
-            }));
-            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Attribute count", [this](const PropertyTreePropertyItem*)->QVariant
-            {
-                return QVariant(this->m_AttributeCount);
-            }));
-            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform count", [this](const PropertyTreePropertyItem*)->QVariant
-            {
-                return QVariant(this->m_UniformCount);
-            }));
-            m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform block count", [this](const PropertyTreePropertyItem*)->QVariant
-            {
-                return QVariant(this->m_UniformBlockCount);
-            }));
-            for(size_t i = 0;i < m_Program->getNumShaders();++i)
-            {
-                m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
+                checkProgramStatus();
             }
-            m_ChildItems.push_back(new PropertyTreeAttributeProgramShaderDefinesItem(this, m_Program));
-
-            checkProgramStatus();
-        }
-        else
+        }));
+        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Attribute count", [this](const PropertyTreePropertyItem*)->QVariant
         {
-            m_Value = tr("Invalid program attribute.");
+            return QVariant(this->m_AttributeCount);
+        }));
+        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform count", [this](const PropertyTreePropertyItem*)->QVariant
+        {
+            return QVariant(this->m_UniformCount);
+        }));
+        m_ChildItems.push_back(new PropertyTreePropertyItem(this, "Uniform block count", [this](const PropertyTreePropertyItem*)->QVariant
+        {
+            return QVariant(this->m_UniformBlockCount);
+        }));
+        for(size_t i = 0;i < m_Program->getNumShaders();++i)
+        {
+            m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));
         }
+        m_ChildItems.push_back(new PropertyTreeAttributeProgramShaderDefinesItem(this, m_Program));
+
+        checkProgramStatus();
     }
     else
     {
-        m_Value = tr("Invalid attribute tree data.");
+        m_Value = tr("Invalid program attribute.");
     }
 }
 
@@ -275,7 +268,7 @@ void PropertyTreeAttributeProgramItem::buttonClicked()
                 ++nsc;
             }
         }
-        m_Model->beginInsertRows(m_Model->createIndex(m_ParentItem->row(), 0, m_ParentItem), sc, sc + nsc - 1);
+        m_Model->beginInsertRows(m_Model->createIndex(0, 0, m_ParentItem), sc, sc + nsc - 1);
         for(size_t i = sc;i < m_Program->getNumShaders();++i)
         {
             m_ChildItems.push_back(new PropertyTreeAttributeShaderItem(this, m_Program->getShader(i)));

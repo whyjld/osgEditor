@@ -9,7 +9,7 @@
 class PropertyTreeModeListItem : public PropertyTreeItem
 {
 public:
-    PropertyTreeModeListItem(PropertyTreeItem *parent, osg::StateSet::ModeList& modeList);
+    PropertyTreeModeListItem(PropertyTreeItem *parent, const QString& name, osg::StateSet::ModeList& modeList);
     virtual ~PropertyTreeModeListItem();
 
     virtual Qt::ItemFlags flags(int column) const;
@@ -26,6 +26,7 @@ private slots:
     void buttonClicked(bool checked);
 
 private:
+    QVariant m_Name;
 };
 
 #endif // PROPERTYTREEMODELISTITEM_H

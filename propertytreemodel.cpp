@@ -136,9 +136,9 @@ int PropertyTreeModel::rowCount(const QModelIndex &parent) const
     return parentItem->childCount();
 }
 
-void PropertyTreeModel::setObject(const osg::ref_ptr<osg::Object>& obj)
+void PropertyTreeModel::setRoot(const std::shared_ptr<PropertyTreeItem>& root)
 {
-    std::shared_ptr<PropertyTreeItem> newRoot(new PropertyTreeItem(this, obj));
-
-    m_RootItem = newRoot;
+    beginResetModel();
+    m_RootItem = root;
+    endResetModel();
 }

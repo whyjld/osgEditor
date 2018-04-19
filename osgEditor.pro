@@ -59,7 +59,9 @@ SOURCES += \
     scenetreeview.cpp \
     createnodedialog.cpp \
     propertytreeswitchitem.cpp \
-    propertytreeattributeprogramshaderdefinesitem.cpp
+    propertytreeattributeprogramshaderdefinesitem.cpp \
+    addtexturedialog.cpp \
+    managerlistitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -102,13 +104,16 @@ HEADERS += \
     scenetreeview.h \
     createnodedialog.h \
     propertytreeswitchitem.h \
-    propertytreeattributeprogramshaderdefinesitem.h
+    propertytreeattributeprogramshaderdefinesitem.h \
+    addtexturedialog.h \
+    managerlistitem.h
 
 FORMS += \
         mainwindow.ui \
     addattributedialog.ui \
     addshaderdialog.ui \
-    createnodedialog.ui
+    createnodedialog.ui \
+    addtexturedialog.ui
 
 INCLUDEPATH += \
     ../QScintilla/include \

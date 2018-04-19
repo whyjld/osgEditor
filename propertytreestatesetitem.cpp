@@ -119,7 +119,7 @@ bool PropertyTreeStateSetItem::CreateStateSet()
     m_StateSet = m_Creator();
     if(!!m_StateSet)
     {
-        m_Model->beginInsertRows(m_Model->createIndex(this->row(), 0, this), 0, 2);
+        m_Model->beginInsertRows(m_Model->createIndex(this->row(), 0, this), 0, 2 + m_StateSet->getNumTextureAttributeLists() + m_StateSet->getNumTextureModeLists());
         CreateStateSetProperty();
         m_Model->endInsertRows();
         return true;
@@ -131,8 +131,26 @@ bool PropertyTreeStateSetItem::CreateStateSetProperty()
 {
     if(!!m_StateSet)
     {
-        m_ChildItems.push_back(new PropertyTreeModeListItem(this, m_StateSet->getModeList()));
-        m_ChildItems.push_back(new PropertyTreeAttributeListItem(this, m_StateSet->getAttributeList()));
+        m_ChildItems.push_back(new PropertyTreeModeListItem(this, "ModeList", m_StateSet->getModeList()));
+        m_ChildItems.push_back(new PropertyTreeAttributeListItem(this, "AttributeList", m_StateSet->getAttributeList()));
+        size_t tac = m_StateSet->getNumTextureAttributeLists();
+        size_t tmc = m_StateSet->getNumTextureModeLists();
+        size_t tc = std::min(tac, tmc);
+        for(size_t i = 0;i < tc;++i)
+        {
+            m_ChildItems.push_back(new PropertyTreeModeListItem(this, QString("Unit[%1] ModeList").arg(i), m_StateSet->getTextureModeList()[i]));
+        }
+        if(tac > tc)
+        {
+
+        }
+        if(tmc > tc)
+        {
+            for(size_t i = tc;i < tmc;++i)
+            {
+                m_ChildItems.push_back(new PropertyTreeModeListItem(this, QString("Unit[%1] ModeList").arg(i), m_StateSet->getTextureModeList()[i]));
+            }
+        }
         m_ChildItems.push_back(new PropertyTreeUniformListItem(this, m_StateSet->getUniformList()));
 
         return true;
